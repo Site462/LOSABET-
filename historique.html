@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historique des Recharges</title>
+    <style>
+        :root {
+            --primary-color: #4a6fa5;
+            --secondary-color: #6b93d6;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --background-color: #f5f7fa;
+            --card-color: #ffffff;
+            --text-color: #333333;
+            --text-secondary: #6c757d;
+            --border-radius: 10px;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            padding: 20px;
+            max-width: 100%;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        header h1 {
+            color: var(--primary-color);
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .history-container {
+            padding: 20px;
+            background-color: var(--card-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .filter-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .search-box {
+            padding: 10px 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            flex-grow: 1;
+            max-width: 300px;
+        }
+
+        .filter-select {
+            padding: 10px 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: white;
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .history-item {
+            background-color: #fff;
+            border-radius: 8px;
+            border: 1px solid #eaeaea;
+            padding: 15px;
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .history-item:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .history-info {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .info-group {
+            margin-bottom: 10px;
+            min-width: 45%;
+        }
+
+        .info-label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 3px;
+        }
+
+        .info-value {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-top: 10px;
+        }
+
+        .status-success {
+            background-color: rgba(40, 167, 69, 0.2);
+            color: var(--success-color);
+        }
+
+        .status-pending {
+            background-color: rgba(255, 193, 7, 0.2);
+            color: var(--warning-color);
+        }
+
+        .status-failed {
+            background-color: rgba(220, 53, 69, 0.2);
+            color: var(--danger-color);
+        }
+
+        .processing-info, .reject-reason {
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .reject-reason {
+            color: var(--danger-color);
+        }
+
+        .no-records {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        /* Pour les écrans mobiles */
+        @media (max-width: 600px) {
+            .info-group {
+                min-width: 100%;
+            }
+            
+            .filter-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-box, .filter-select {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Historique des Recharges</h1>
+            <p>Suivez toutes vos transactions de recharge</p>
+        </header>
+
+        <div class="history-container">
+            <div class="filter-bar">
+                <input type="text" class="search-box" placeholder="Rechercher par numéro ou ID...">
+                <select class="filter-select">
+                    <option value="all">Tous les statuts</option>
+                    <option value="success">Crédité</option>
+                    <option value="pending">En cours</option>
+                    <option value="failed">Échec</option>
+                </select>
+            </div>
+
+            <div id="historyList" class="history-list">
+                <!-- Le contenu sera rempli dynamiquement par le script JavaScript -->
+                <div class="no-records">Chargement de l'historique...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Firebase -->
+    <script type="module">
+        // Import des modules Firebase via CDN
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+        import { getDatabase, ref, get, update, onValue, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
+
+        // Configuration Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyCma9f6DgVY24WG3GL5K5sDkxvUww6iLvo",
+            authDomain: "parisien-foot.firebaseapp.com",
+            databaseURL: "https://parisien-foot-default-rtdb.firebaseio.com",
+            projectId: "parisien-foot",
+            storageBucket: "parisien-foot.firebasestorage.app",
+            messagingSenderId: "644508637847",
+            appId: "1:644508637847:web:3aeb0ae7a37ce3b0a067d2"
+        };
+
+        // Initialisation de l'application
+        try {
+            // Initialisation de Firebase
+            const app = initializeApp(firebaseConfig);
+            const auth = getAuth(app);
+            const db = getDatabase(app);
+            const creditedTransactions = new Set();
+
+            // Fonction de formatage de date
+            function formatDate(dateString) {
+                try {
+                    const date = new Date(dateString);
+                    if (isNaN(date.getTime())) throw new Error('Date invalide');
+                    
+                    return new Intl.DateTimeFormat('fr-FR', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    }).format(date).replace(',', ' à');
+                } catch (error) {
+                    return 'Date non disponible';
+                }
+            }
+
+            // Fonction pour obtenir la classe CSS du statut
+            function getStatusClass(status) {
+                const statusClasses = {
+                    success: 'status-success',
+                    pending: 'status-pending',
+                    failed: 'status-failed'
+                };
+                return statusClasses[status] || '';
+            }
+
+            // Fonction de traduction du statut
+            function translateStatus(status) {
+                const translations = {
+                    success: 'Crédité',
+                    pending: 'En cours de vérification',
+                    failed: 'Échec'
+                };
+                return translations[status] || status;
+            }
+
+            // Fonction de mise à jour du solde utilisateur
+            async function updateUserBalance(userId, amount, transactionId) {
+                if (creditedTransactions.has(transactionId)) return;
+
+                try {
+                    const userRef = ref(db, `users/${userId}`);
+                    const snapshot = await get(userRef);
+
+                    if (snapshot.exists()) {
+                        const userData = snapshot.val();
+                        const currentBalance = userData.solde || 0;
+                        const newBalance = currentBalance + parseFloat(amount);
+
+                        const updates = {};
+                        updates[`users/${userId}/solde`] = newBalance;
+                        updates[`transactions/${transactionId}/credited`] = true;
+
+                        await update(ref(db), updates);
+                        creditedTransactions.add(transactionId);
+                    }
+                } catch (error) {
+                    console.error('Erreur de mise à jour du solde:', error);
+                }
+            }
+
+            // Fonction de création d'un élément d'historique
+            function createHistoryItem(transaction, userId) {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.dataset.transactionId = transaction.transactionId || '';
+
+                if (transaction.status === 'success' && !transaction.credited && userId) {
+                    updateUserBalance(userId, transaction.amount || 0, transaction.transactionId);
+                }
+
+                historyItem.innerHTML = `
+                    <div class="history-info">
+                        <div class="info-group">
+                            <span class="info-label">Montant</span>
+                            <span class="info-value">${transaction.amount || 0} FCFA</span>
+                        </div>
+                        <div class="info-group">
+                            <span class="info-label">Numéro rechargé</span>
+                            <span class="info-value">${transaction.phone || 'Non spécifié'}</span>
+                        </div>
+                    </div>
+                    <div class="history-info">
+                        <div class="info-group">
+                            <span class="info-label">Opérateur</span>
+                            <span class="info-value">${transaction.operator ? transaction.operator.toUpperCase() : 'Non spécifié'}</span>
+                        </div>
+                        <div class="info-group">
+                            <span class="info-label">ID Transaction</span>
+                            <span class="info-value">${transaction.transactionId || 'Non spécifié'}</span>
+                        </div>
+                    </div>
+                    <div class="history-info">
+                        <div class="info-group">
+                            <span class="info-label">Date</span>
+                            <span class="info-value">${formatDate(transaction.date)}</span>
+                        </div>
+                        <div class="info-group">
+                            <span class="info-label">Numéro de paiement</span>
+                            <span class="info-value">${transaction.userPaymentNumber || 'Non spécifié'}</span>
+                        </div>
+                    </div>
+                    ${transaction.processedDate ? `
+                        <div class="processing-info">Traité le ${formatDate(transaction.processedDate)}</div>
+                    ` : ''}
+                    ${transaction.status === 'failed' && transaction.rejectReason ? `
+                        <div class="reject-reason">Motif du rejet: ${transaction.rejectReason}</div>
+                    ` : ''}
+                    <div class="status ${getStatusClass(transaction.status || 'pending')}">
+                        ${translateStatus(transaction.status || 'pending')}
+                    </div>
+                `;
+
+                return historyItem;
+            }
+
+            // Fonction d'affichage des transactions
+            function displayTransactions(transactions, userId) {
+                const historyList = document.getElementById('historyList');
+                if (!historyList) return;
+                
+                if (!transactions || Object.keys(transactions).length === 0) {
+                    historyList.innerHTML = '<div class="no-records">Aucune transaction trouvée</div>';
+                    return;
+                }
+
+                // Filtrer les transactions pour ne garder que celles de l'utilisateur courant
+                const userTransactions = Object.entries(transactions)
+                    .filter(([_, transaction]) => transaction.userId === userId)
+                    .map(([id, transaction]) => ({...transaction, id}))
+                    .sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+
+                if (userTransactions.length === 0) {
+                    historyList.innerHTML = '<div class="no-records">Aucune transaction trouvée</div>';
+                    return;
+                }
+
+                const fragment = document.createDocumentFragment();
+                let hasNewItems = false;
+
+                userTransactions.forEach(transaction => {
+                    const existingItem = document.querySelector(
+                        `[data-transaction-id="${transaction.transactionId}"]`
+                    );
+
+                    if (existingItem) {
+                        const newItem = createHistoryItem(transaction, userId);
+                        if (existingItem.innerHTML !== newItem.innerHTML) {
+                            existingItem.parentNode.replaceChild(newItem, existingItem);
+                        }
+                    } else {
+                        fragment.appendChild(createHistoryItem(transaction, userId));
+                        hasNewItems = true;
+                    }
+                });
+
+                if (hasNewItems) {
+                    if (historyList.children.length === 0) {
+                        historyList.appendChild(fragment);
+                    } else {
+                        historyList.insertBefore(fragment, historyList.firstChild);
+                    }
+                }
+
+                const currentIds = new Set(userTransactions.map(t => t.transactionId));
+                Array.from(historyList.children).forEach(child => {
+                    const id = child.dataset.transactionId;
+                    if (id && !currentIds.has(id)) {
+                        child.remove();
+                    }
+                });
+            }
+
+            // Ajout des fonctionnalités de filtrage
+            document.querySelector('.search-box').addEventListener('input', function(e) {
+                filterTransactions();
+            });
+
+            document.querySelector('.filter-select').addEventListener('change', function(e) {
+                filterTransactions();
+            });
+
+            function filterTransactions() {
+                const searchTerm = document.querySelector('.search-box').value.toLowerCase();
+                const statusFilter = document.querySelector('.filter-select').value;
+                
+                const transactionItems = document.querySelectorAll('.history-item');
+                
+                transactionItems.forEach(item => {
+                    // Rechercher tous les éléments info-label et trouver celui qui contient "Numéro rechargé"
+                    let phoneElement = null;
+                    let idElement = null;
+                    const labels = item.querySelectorAll('.info-label');
+                    
+                    labels.forEach(label => {
+                        if (label.textContent === 'Numéro rechargé') {
+                            phoneElement = label.nextElementSibling;
+                        } else if (label.textContent === 'ID Transaction') {
+                            idElement = label.nextElementSibling;
+                        }
+                    });
+                    
+                    const phone = phoneElement ? phoneElement.textContent.toLowerCase() : '';
+                    const id = idElement ? idElement.textContent.toLowerCase() : '';
+                    const statusClass = item.querySelector('.status').className;
+                    
+                    const matchesSearch = !searchTerm || phone.includes(searchTerm) || id.includes(searchTerm);
+                    const matchesStatus = statusFilter === 'all' || statusClass.includes(statusFilter);
+                    
+                    item.style.display = (matchesSearch && matchesStatus) ? 'block' : 'none';
+                });
+            }
+
+            // Écouteur d'authentification
+            onAuthStateChanged(auth, (user) => {
+                const historyList = document.getElementById('historyList');
+                if (!historyList) return;
+                
+                if (user) {
+                    // Création de la requête avec query, orderByChild et equalTo pour filtrer par userId
+                    const transactionsRef = query(
+                        ref(db, 'transactions'),
+                        orderByChild('userId'),
+                        equalTo(user.uid)
+                    );
+                    
+                    // Écoute des changements
+                    onValue(transactionsRef, (snapshot) => {
+                        try {
+                            const transactions = snapshot.val();
+                            displayTransactions(transactions, user.uid);
+                        } catch (error) {
+                            console.error('Erreur lors de la récupération des transactions:', error);
+                            if (historyList) {
+                                historyList.innerHTML = '<div class="no-records">Erreur lors du chargement des transactions</div>';
+                            }
+                        }
+                    }, (error) => {
+                        console.error('Erreur Firebase:', error);
+                        if (historyList) {
+                            historyList.innerHTML = '<div class="no-records">Erreur de connexion</div>';
+                        }
+                    });
+                } else {
+                    historyList.innerHTML = '<div class="no-records">Veuillez vous connecter pour voir votre historique</div>';
+                }
+            });
+
+        } catch (error) {
+            console.error('Erreur d\'initialisation:', error);
+            const historyList = document.getElementById('historyList');
+            if (historyList) {
+                historyList.innerHTML = '<div class="no-records">Erreur d\'initialisation de l\'application</div>';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuration des Retraits</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --success-color: #2ecc71;
+            --error-color: #e74c3c;
+            --text-color: #2c3e50;
+            --light-gray: #ecf0f1;
+            --medium-gray: #bdc3c7;
+            --dark-gray: #7f8c8d;
+            --white: #ffffff;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --radius: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f9f9f9;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+            padding: 20px 0;
+            box-shadow: var(--shadow);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        /* Main content */
+        main {
+            padding: 30px 0;
+        }
+
+        .card {
+            background-color: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            font-size: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .field-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--medium-gray);
+            border-radius: var(--radius);
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .field-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+
+        /* Operator selector */
+        .operator-selector {
+            border: 1px solid var(--medium-gray);
+            border-radius: var(--radius);
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            background-color: var(--white);
+            transition: border-color 0.3s ease;
+        }
+
+        .operator-selector:hover {
+            border-color: var(--primary-color);
+        }
+
+        .operator-selected {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .operator-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Bottom sheet */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 999;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        .bottom-sheet {
+            position: fixed;
+            bottom: -300px;
+            left: 0;
+            right: 0;
+            background-color: var(--white);
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            padding: 20px;
+            z-index: 1000;
+            transition: bottom 0.3s ease-out;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .bottom-sheet.active {
+            bottom: 0;
+        }
+
+        .sheet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .sheet-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .operators-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .operator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            border: 1px solid var(--light-gray);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .operator.selected {
+            border-color: var(--primary-color);
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+
+        .operator-logo {
+            width: 30px;
+            height: 30px;
+            background-color: var(--light-gray);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mtn { color: #ffcc00; font-weight: bold; }
+        .orange { color: #ff7f00; font-weight: bold; }
+        .moov { color: #0066cc; font-weight: bold; }
+        .wave { color: #9c27b0; font-weight: bold; }
+
+        .sheet-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--medium-gray);
+            color: var(--dark-gray);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--light-gray);
+        }
+
+        .btn-block {
+            width: 100%;
+        }
+
+        /* Messages */
+        #message {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .message-success, .message-error {
+            padding: 15px;
+            border-radius: var(--radius);
+            text-align: center;
+            box-shadow: var(--shadow);
+            margin-bottom: 10px;
+        }
+
+        .message-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .message-error {
+            background-color: var(--error-color);
+            color: white;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--light-gray);
+            padding: 20px 0;
+            text-align: center;
+            color: var(--dark-gray);
+            font-size: 14px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .operators-list {
+                grid-template-columns: 1fr;
+            }
+            
+            .sheet-actions {
+                flex-direction: column;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+
+        /* Icons */
+        .icon {
+            width: 24px;
+            height: 24px;
+            display: inline-block;
+            vertical-align: middle;
+            fill: currentColor;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z"/>
+                    </svg>
+                    MoneyTransfer Pro
+                </div>
+                <div class="user-info">
+                    <div class="user-avatar">U</div>
+                    <span id="userName">Utilisateur</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="card">
+                <h2 class="section-title">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/>
+                    </svg>
+                    Configuration des Retraits
+                </h2>
+                <p style="margin-bottom: 20px;">Configurez vos informations pour recevoir des paiements rapidement et en toute sécurité.</p>
+                
+                <form id="withdrawalForm">
+                    <div class="form-group">
+                        <label class="form-label" for="ownerName">Nom du Propriétaire</label>
+                        <input type="text" id="ownerName" class="field-input" placeholder="Entrez votre nom complet">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Opérateur Mobile</label>
+                        <div id="operatorSelector" class="operator-selector">
+                            <div class="operator-selected">
+                                <div class="operator-icon">
+                                    <svg class="icon" viewBox="0 0 24 24">
+                                        <path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/>
+                                    </svg>
+                                </div>
+                                <span id="selectedType">MTN</span>
+                            </div>
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M7 10l5 5 5-5z"/>
+                            </svg>
+                        </div>
+                        <input type="hidden" id="operator" value="MTN">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="phone">Numéro de Compte</label>
+                        <input type="tel" id="phone" class="field-input" placeholder="Entrez votre numéro de téléphone">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="code">Code de Retrait</label>
+                        <input type="password" id="code" class="field-input" placeholder="Entrez votre code secret (min. 4 caractères)">
+                    </div>
+                    
+                    <button type="button" id="submitBtn" class="btn btn-primary btn-block">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                        </svg>
+                        Enregistrer la Configuration
+                    </button>
+                </form>
+            </div>
+            
+            <div class="card">
+                <h2 class="section-title">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M11 17h2v-6h-2v6zm1-15C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zM11 9h2V7h-2v2z"/>
+                    </svg>
+                    Informations Importantes
+                </h2>
+                <ul style="list-style: none; padding-left: 10px;">
+                    <li style="margin-bottom: 10px; display: flex; align-items: flex-start; gap: 10px;">
+                        <svg class="icon" style="min-width: 24px; color: var(--primary-color);" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+                        </svg>
+                        <span>Assurez-vous que les informations fournies sont correctes pour éviter tout problème de paiement.</span>
+                    </li>
+                    <li style="margin-bottom: 10px; display: flex; align-items: flex-start; gap: 10px;">
+                        <svg class="icon" style="min-width: 24px; color: var(--primary-color);" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+                        </svg>
+                        <span>Votre code de retrait doit rester confidentiel et ne jamais être partagé.</span>
+                    </li>
+                    <li style="margin-bottom: 10px; display: flex; align-items: flex-start; gap: 10px;">
+                        <svg class="icon" style="min-width: 24px; color: var(--primary-color);" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+                        </svg>
+                        <span>Les retraits sont généralement traités dans un délai de 24 à 48 heures ouvrables.</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 MoneyTransfer Pro. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <!-- Bottom Sheet pour la sélection d'opérateur -->
+    <div id="overlay" class="overlay"></div>
+    <div id="bottomSheet" class="bottom-sheet">
+        <div class="sheet-header">
+            <div class="sheet-title">Sélectionnez un opérateur</div>
+            <button id="cancelBtn" class="btn btn-outline" style="padding: 8px;">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                </svg>
+            </button>
+        </div>
+        
+        <div class="operators-list">
+            <div class="operator selected" data-operator="MTN">
+                <div class="operator-logo mtn">MTN</div>
+                <div class="operator-name">MTN Mobile Money</div>
+            </div>
+            <div class="operator" data-operator="Orange">
+                <div class="operator-logo orange">OM</div>
+                <div class="operator-name">Orange Money</div>
+            </div>
+            <div class="operator" data-operator="Moov">
+                <div class="operator-logo moov">MV</div>
+                <div class="operator-name">Moov Money</div>
+            </div>
+            <div class="operator" data-operator="Wave">
+                <div class="operator-logo wave">WV</div>
+                <div class="operator-name">Wave</div>
+            </div>
+        </div>
+        
+        <div class="sheet-actions">
+            <button id="cancelBtn" class="btn btn-outline" style="flex: 1;">Annuler</button>
+            <button id="confirmBtn" class="btn btn-primary" style="flex: 1;">Confirmer</button>
+        </div>
+    </div>
+
+    <!-- Message Container -->
+    <div id="message"></div>
+
+    <!-- Import des modules Firebase -->
+    <script type="module">
+    // Import des modules Firebase via CDN
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+    import { getDatabase, ref, set, get, push, update, onValue, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
+    import { getStorage } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-storage.js";
+
+    // Configuration Firebase
+    const firebaseConfig = {
+        apiKey: "AIzaSyCma9f6DgVY24WG3GL5K5sDkxvUww6iLvo",
+        authDomain: "parisien-foot.firebaseapp.com",
+        databaseURL: "https://parisien-foot-default-rtdb.firebaseio.com",
+        projectId: "parisien-foot",
+        storageBucket: "parisien-foot.firebasestorage.app",
+        messagingSenderId: "644508637847",
+        appId: "1:644508637847:web:3aeb0ae7a37ce3b0a067d2"
+    };
+
+        // Initialisation Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase();
+        const auth = getAuth();
+
+        // Éléments du DOM
+        const operatorSelector = document.getElementById('operatorSelector');
+        const bottomSheet = document.getElementById('bottomSheet');
+        const overlay = document.getElementById('overlay');
+        const cancelBtns = document.querySelectorAll('#cancelBtn');
+        const confirmBtn = document.getElementById('confirmBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        const options = document.querySelectorAll('.operator');
+        const selectedTypeDisplay = document.getElementById('selectedType');
+        const operatorInput = document.getElementById('operator');
+        const userNameElement = document.getElementById('userName');
+
+        let currentSelection = 'MTN';
+        let tempSelection = 'MTN';
+
+        // Fonctions pour le bottom sheet
+        function openBottomSheet() {
+            bottomSheet.classList.add('active');
+            overlay.classList.add('active');
+            tempSelection = currentSelection;
+            
+            // Mettre à jour la sélection visuelle
+            options.forEach(option => {
+                option.classList.toggle('selected', option.dataset.operator === tempSelection);
+            });
+        }
+
+        function closeBottomSheet() {
+            bottomSheet.classList.remove('active');
+            overlay.classList.remove('active');
+            tempSelection = currentSelection;
+        }
+
+        function confirmSelection() {
+            currentSelection = tempSelection;
+            selectedTypeDisplay.textContent = currentSelection;
+            operatorInput.value = currentSelection;
+            closeBottomSheet();
+        }
+
+        // Gestionnaires d'événements
+        operatorSelector.addEventListener('click', openBottomSheet);
+        overlay.addEventListener('click', closeBottomSheet);
+        cancelBtns.forEach(btn => btn.addEventListener('click', closeBottomSheet));
+        confirmBtn.addEventListener('click', confirmSelection);
+
+        options.forEach(option => {
+            option.addEventListener('click', (e) => {
+                options.forEach(opt => opt.classList.remove('selected'));
+                option.classList.add('selected');
+                tempSelection = option.dataset.operator;
+            });
+        });
+
+        // Fonction d'affichage des messages
+        function showMessage(text, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.innerHTML = `
+                <div class="message-${type} animate__animated animate__fadeIn">
+                    ${text}
+                </div>
+            `;
+
+            // Effacer le message après 5 secondes
+            setTimeout(() => {
+                messageDiv.innerHTML = '';
+            }, 5000);
+        }
+
+        // Validation du formulaire
+        function validateForm() {
+            const ownerName = document.getElementById('ownerName').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const code = document.getElementById('code').value.trim();
+
+            if (!ownerName) {
+                showMessage('Le nom du propriétaire est requis', 'error');
+                return false;
+            }
+
+            if (!phone) {
+                showMessage('Le numéro de compte est requis', 'error');
+                return false;
+            }
+
+            if (!code) {
+                showMessage('Le code de retrait est requis', 'error');
+                return false;
+            }
+
+            // Validation du code de retrait (minimum 4 caractères)
+            if (code.length < 4) {
+                showMessage('Le code de retrait doit contenir au moins 4 caractères', 'error');
+                return false;
+            }
+
+            return true;
+        }
+
+        // Configuration du retrait
+        async function setupWithdrawal() {
+            if (!validateForm()) {
+                return;
+            }
+
+            const ownerName = document.getElementById('ownerName').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const code = document.getElementById('code').value.trim();
+            const operator = operatorInput.value;
+
+            try {
+                const user = auth.currentUser;
+                if (!user) {
+                    showMessage('Vous devez être connecté pour effectuer cette opération', 'error');
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                    return;
+                }
+
+                // Désactiver le bouton pendant la soumission
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Enregistrement en cours...';
+
+                // Enregistrement dans Firebase
+                await set(ref(db, `users/${user.uid}/withdrawalConfig`), {
+                    ownerName,
+                    phone,
+                    operator,
+                    code,
+                    configuredAt: Date.now(),
+                    lastUpdated: new Date().toISOString()
+                });
+
+                showMessage('Configuration enregistrée avec succès !', 'success');
+                
+                // Redirection après succès
+                setTimeout(() => {
+                    window.location.href = '#';
+                }, 2000);
+
+            } catch (error) {
+                console.error('Erreur lors de l\'enregistrement:', error);
+                showMessage(`Erreur: ${error.message}`, 'error');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Enregistrer';
+            }
+        }
+
+        // Charger les données existantes si disponibles
+        function loadExistingData() {
+            const user = auth.currentUser;
+            if (!user) return;
+
+            const configRef = ref(db, `users/${user.uid}/withdrawalConfig`);
+            onValue(configRef, (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    document.getElementById('ownerName').value = data.ownerName || '';
+                    document.getElementById('phone').value = data.phone || '';
+                    document.getElementById('code').value = data.code || '';
+                    currentSelection = data.operator || 'MTN';
+                    selectedTypeDisplay.textContent = currentSelection;
+                    operatorInput.value = currentSelection;
+                }
+            });
+
+            // Afficher le nom de l'utilisateur
+            if (user.displayName) {
+                userNameElement.textContent = user.displayName;
+            } else {
+                userNameElement.textContent = "Utilisateur";
+            }
+        }
+
+        // Écouter le statut d'authentification
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+            loadExistingData();
+        });
+
+        // Associer la fonction de soumission au bouton
+        submitBtn.addEventListener('click', setupWithdrawal);
+
+        // Gérer la soumission du formulaire avec la touche Entrée
+        document.querySelectorAll('.field-input').forEach(input => {
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    setupWithdrawal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

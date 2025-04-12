@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recharger</title>
+    <style>
+        /* Reset et styles de base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            min-height: 100vh;
+            background: linear-gradient(to right, #e0f7fa, #b2ebf2);
+            padding: 0.75rem;
+        }
+        
+        /* Styles d'en-tête */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        
+        .back-button {
+            font-size: 1.25rem;
+            font-weight: bold;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .clock-icon {
+            width: 2rem;
+            height: 2rem;
+            background-color: #80deea;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+        
+        /* Contenu principal */
+        .main-content {
+            flex: 1;
+        }
+        
+        .section-title {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Section des montants */
+        .amount-section {
+            margin-bottom: 1rem;
+        }
+        
+        .amount-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .amount-button {
+            padding: 0.5rem;
+            border-radius: 9999px;
+            border: 2px solid #ccc;
+            background: none;
+            color: #4a5568;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        
+        .amount-button.selected {
+            border-color: #4fd1c5;
+            color: #38b2ac;
+            font-weight: 500;
+        }
+        
+        /* Container d'entrée personnalisée */
+        .input-container {
+            display: flex;
+            align-items: center;
+            border: 2px solid #4fd1c5;
+            border-radius: 9999px;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        .currency-symbol {
+            font-size: 1rem;
+            font-weight: bold;
+            margin-right: 0.75rem;
+        }
+        
+        #custom-amount {
+            flex: 1;
+            background: transparent;
+            font-size: 1rem;
+            border: none;
+            outline: none;
+        }
+        
+        /* Section des canaux */
+        .channels-section {
+            margin-bottom: 1rem;
+        }
+        
+        .channel-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+        }
+        
+        .channel-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem;
+            border-radius: 9999px;
+            border: 2px solid #ccc;
+            background: none;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        
+        .channel-button.selected {
+            border-color: #4fd1c5;
+            color: #38b2ac;
+        }
+        
+        /* Styles d'icônes pour les canaux */
+        .skgpay-icon {
+            width: 1.5rem;
+            height: 1.25rem;
+            background-color: #e53e3e;
+            margin-right: 0.5rem;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .skgpay-inner {
+            width: 0.75rem;
+            height: 0.75rem;
+            background-color: #38a169;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .skgpay-star {
+            color: #ecc94b;
+            font-size: 0.6rem;
+        }
+        
+        .wave-icon, .orange-icon {
+            display: flex;
+            margin-right: 0.5rem;
+        }
+        
+        .wave-orange, .orange-orange {
+            width: 0.4rem;
+            height: 1.25rem;
+            background-color: #ed8936;
+            margin-right: 0.2rem;
+        }
+        
+        .wave-green, .orange-green {
+            width: 0.4rem;
+            height: 1.25rem;
+            background-color: #48bb78;
+        }
+        
+        /* Bouton de soumission */
+        .submit-button {
+            width: 100%;
+            background-color: #4fd1c5;
+            color: white;
+            border: none;
+            border-radius: 9999px;
+            padding: 0.75rem;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        
+        /* Section des termes et conditions */
+        .terms-section {
+            margin-top: 1rem;
+            color: #4a5568;
+            font-size: 0.85rem;
+        }
+        
+        .terms-title {
+            font-size: 1rem;
+            font-weight: 500;
+            color: black;
+            margin-bottom: 0.5rem;
+        }
+        
+        .terms-list {
+            list-style-type: none;
+        }
+        
+        .terms-item {
+            margin-bottom: 1rem;
+        }
+        
+        .terms-number {
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+        
+        /* Styles pour la notification */
+        .notification {
+            display: none;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+        }
+        
+        .notification.success {
+            background-color: #c6f6d5;
+            color: #2f855a;
+        }
+        
+        .notification.error-notification {
+            background-color: #fed7d7;
+            color: #c53030;
+        }
+        
+        /* Styles pour le chargement */
+        .loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+    
+    <!-- Loading overlay -->
+    <div class="loading">
+        <div class="spinner"></div>
+    </div>
+    
+    <div class="header">
+        <button class="back-button">&#8592;</button>
+        <h1 class="title">Recharger</h1>
+        <div class="clock-icon">
+            <span>⏱</span>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <!-- Formulaire de recharge -->
+        <form id="rechargeForm">
+            <!-- Amount Selection -->
+            <div class="amount-section">
+                <h2 class="section-title">Montant du dépôt minimum (XOF 5000)</h2>
+                
+                <div class="amount-grid">
+                    <button type="button" class="amount-button selected quick-amount-btn" data-amount="5000">5,000</button>
+                    <button type="button" class="amount-button quick-amount-btn" data-amount="10000">10,000</button>
+                    <button type="button" class="amount-button quick-amount-btn" data-amount="20000">20,000</button>
+                </div>
+                
+                <div class="amount-grid">
+                    <button type="button" class="amount-button quick-amount-btn" data-amount="50000">50,000</button>
+                    <button type="button" class="amount-button quick-amount-btn" data-amount="100000">100,000</button>
+                    <button type="button" class="amount-button quick-amount-btn" data-amount="300000">300,000</button>
+                </div>
+                
+                <div class="amount-grid">
+                    <button type="button" class="amount-button quick-amount-btn" data-amount="500000">500,000</button>
+                    <button type="button" class="amount-button quick-amount-btn" data-amount="1000000">1,000,000</button>
+                </div>
+            </div>
+
+            <!-- Custom Amount Input -->
+            <div class="input-container">
+                <span class="currency-symbol">XOF</span>
+                <input type="text" id="amount" name="amount" value="5000">
+                <div id="amountError" style="opacity: 0; color: red; font-size: 0.75rem; margin-top: 0.25rem;"></div>
+            </div>
+
+            <!-- Deposit Channels -->
+            <div class="channels-section">
+                <h2 class="section-title">Canaux de dépôt</h2>
+                <div class="channel-grid">
+                    <label class="operator-option">
+                        <input type="radio" name="operator" value="skgpay" class="hidden-radio">
+                        <button type="button" class="channel-button">
+                            <div class="skgpay-icon">
+                                <div class="skgpay-inner">
+                                    <span class="skgpay-star">★</span>
+                                </div>
+                            </div>
+                            SKGPay
+                        </button>
+                    </label>
+                    
+                    <label class="operator-option">
+                        <input type="radio" name="operator" value="wave" class="hidden-radio" checked>
+                        <button type="button" class="channel-button selected">
+                            <div class="wave-logo">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 192 192" fill="none">
+                                    <path d="M96 0C43 0 0 43 0 96C0 149 43 192 96 192C149 192 192 149 192 96C192 43 149 0 96 0Z" fill="#1DCBEF"/>
+                                    <path d="M73.3 146.9C80.4 146.9 86.1 141.2 86.1 134.1C86.1 127 80.4 121.3 73.3 121.3C66.2 121.3 60.5 127 60.5 134.1C60.5 141.2 66.2 146.9 73.3 146.9Z" fill="white"/>
+                                    <path d="M118.7 146.9C125.8 146.9 131.5 141.2 131.5 134.1C131.5 127 125.8 121.3 118.7 121.3C111.6 121.3 105.9 127 105.9 134.1C105.9 141.2 111.6 146.9 118.7 146.9Z" fill="white"/>
+                                    <path d="M96 107.2C103.1 107.2 108.8 101.5 108.8 94.4C108.8 87.3 103.1 81.6 96 81.6C88.9 81.6 83.2 87.3 83.2 94.4C83.2 101.5 88.9 107.2 96 107.2Z" fill="white"/>
+                                    <path d="M50.7 107.2C57.8 107.2 63.5 101.5 63.5 94.4C63.5 87.3 57.8 81.6 50.7 81.6C43.6 81.6 37.9 87.3 37.9 94.4C37.9 101.5 43.6 107.2 50.7 107.2Z" fill="white"/>
+                                    <path d="M141.3 107.2C148.4 107.2 154.1 101.5 154.1 94.4C154.1 87.3 148.4 81.6 141.3 81.6C134.2 81.6 128.5 87.3 128.5 94.4C128.5 101.5 134.2 107.2 141.3 107.2Z" fill="white"/>
+                                    <path d="M118.7 67.5C125.8 67.5 131.5 61.8 131.5 54.7C131.5 47.6 125.8 41.9 118.7 41.9C111.6 41.9 105.9 47.6 105.9 54.7C105.9 61.8 111.6 67.5 118.7 67.5Z" fill="white"/>
+                                    <path d="M73.3 67.5C80.4 67.5 86.1 61.8 86.1 54.7C86.1 47.6 80.4 41.9 73.3 41.9C66.2 41.9 60.5 47.6 60.5 54.7C60.5 61.8 66.2 67.5 73.3 67.5Z" fill="white"/>
+                                </svg>
+                            </div>
+                            <span style="color: #38b2ac;">Wave</span>
+                        </button>
+                    </label>
+                    
+                    <label class="operator-option">
+                        <input type="radio" name="operator" value="orange" class="hidden-radio">
+                        <button type="button" class="channel-button">
+                            <div class="orange-icon">
+                                <div class="orange-orange"></div>
+                                <div class="orange-green"></div>
+                            </div>
+                            Orange
+                        </button>
+                    </label>
+                    
+                    <label class="operator-option">
+                        <input type="radio" name="operator" value="moov" class="hidden-radio">
+                        <button type="button" class="channel-button">
+                            <div class="orange-icon">
+                                <div class="orange-orange"></div>
+                                <div class="orange-green"></div>
+                            </div>
+                            Moov
+                        </button>
+                    </label>
+                    
+                    <label class="operator-option">
+                        <input type="radio" name="operator" value="mtn" class="hidden-radio">
+                        <button type="button" class="channel-button">
+                            <div class="orange-icon">
+                                <div class="orange-orange"></div>
+                                <div class="orange-green"></div>
+                            </div>
+                            Mtn
+                        </button>
+                    </label>
+                </div>
+                <div id="operatorError" style="opacity: 0; color: red; font-size: 0.75rem; margin-top: 0.25rem;"></div>
+            </div>
+
+            <!-- Numéro de téléphone -->
+            <div class="input-container">
+                <span class="currency-symbol">Numéro de paiement</span>
+                <input type="tel" id="phone" name="phone" placeholder="Numéro de téléphone">
+                <div id="phoneError" style="opacity: 0; color: red; font-size: 0.75rem; margin-top: 0.25rem;"></div>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="submit-button">
+                Effectuer un dépôt immédiat
+            </button>
+        </form>
+
+        <!-- Terms and Conditions -->
+        <div class="terms-section">
+            <h2 class="terms-title">Description du dépôt</h2>
+            <ol class="terms-list">
+                <li class="terms-item">
+                    <span class="terms-number">1.</span>
+                    Le montant minimum du dépôt est de 5000 XOF. Les virements inférieurs à 5000 XOF ne pourront aboutir.
+                </li>
+                <li class="terms-item">
+                    <span class="terms-number">2.</span>
+                    Chaque fois que vous rechargez, vous devez soumettre à nouveau la demande de recharge pour obtenir le dernier compte de recharge de la plateforme à transférer. Veuillez ne pas transférer d'argent sur le compte du destinataire précédent.
+                </li>
+                <li class="terms-item">
+                    <span class="terms-number">3.</span>
+                    Veuillez fonctionner conformément aux règles de recharge.
+                </li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        // Script pour la sélection de montant et de canal
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get DOM elements
+            const amountButtons = document.querySelectorAll('.amount-button');
+            const customAmountInput = document.getElementById('amount');
+            const operatorOptions = document.querySelectorAll('.operator-option');
+            
+            // Set up event listeners for amount buttons
+            amountButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Remove selected class from all buttons
+                    amountButtons.forEach(btn => btn.classList.remove('selected'));
+                    // Add selected class to clicked button
+                    button.classList.add('selected');
+                    // Update input value
+                    const amount = button.getAttribute('data-amount');
+                    customAmountInput.value = amount;
+                });
+            });
+
+            // Update selected button when input changes
+            customAmountInput.addEventListener('input', () => {
+                const inputValue = customAmountInput.value;
+                
+                // Find matching button
+                let matchingButton = null;
+                amountButtons.forEach(button => {
+                    if (button.getAttribute('data-amount') === inputValue) {
+                        matchingButton = button;
+                    }
+                });
+                
+                // Update button selection
+                amountButtons.forEach(btn => btn.classList.remove('selected'));
+                if (matchingButton) {
+                    matchingButton.classList.add('selected');
+                }
+            });
+
+            // Set up event listeners for operator selection
+            operatorOptions.forEach(option => {
+                const radio = option.querySelector('input[type="radio"]');
+                const button = option.querySelector('.channel-button');
+                
+                button.addEventListener('click', () => {
+                    // Check the radio input
+                    radio.checked = true;
+                    
+                    // Remove selected class from all buttons
+                    document.querySelectorAll('.channel-button').forEach(btn => {
+                        btn.classList.remove('selected');
+                    });
+                    
+                    // Add selected class to clicked button
+                    button.classList.add('selected');
+                });
+            });
+        });
+    </script>
+    
+    <script type="module">
+    // Import des modules Firebase via CDN
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+    import { getDatabase, ref, set, get, push, update, onValue, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
+    import { getStorage } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-storage.js";
+
+    // Configuration Firebase
+    const firebaseConfig = {
+        apiKey: "AIzaSyCma9f6DgVY24WG3GL5K5sDkxvUww6iLvo",
+        authDomain: "parisien-foot.firebaseapp.com",
+        databaseURL: "https://parisien-foot-default-rtdb.firebaseio.com",
+        projectId: "parisien-foot",
+        storageBucket: "parisien-foot.firebasestorage.app",
+        messagingSenderId: "644508637847",
+        appId: "1:644508637847:web:3aeb0ae7a37ce3b0a067d2"
+    };
+
+        // Initialiser Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Sélection des éléments du DOM
+            const form = document.getElementById('rechargeForm');
+            const phoneInput = document.getElementById('phone');
+            const amountInput = document.getElementById('amount');
+            const phoneError = document.getElementById('phoneError');
+            const amountError = document.getElementById('amountError');
+            const operatorError = document.getElementById('operatorError');
+            const loading = document.querySelector('.loading');
+
+            // Dictionnaire des numéros par opérateur
+            const operatorNumbers = {
+                'mtn': '+2250554049897',
+                'moov': 'indisponible',
+                'orange': '+2250700258398',
+                'wave': '+2250554049897',
+                'skgpay': 'TArN5XsrxyhtuzxwKQiWNTBsmMm9Brkim9'
+            };
+
+            // Fonctions utilitaires
+            function showLoading() {
+                loading.style.display = 'flex';
+            }
+
+            function hideLoading() {
+                loading.style.display = 'none';
+            }
+
+            function showNotification(message, type = 'success') {
+                const notification = document.getElementById('notification');
+                notification.textContent = message;
+                notification.className = `notification ${type}`;
+                notification.style.display = 'block';
+
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                }, 5000);
+            }
+
+            function showError(elementId, message) {
+                const errorElement = document.getElementById(elementId);
+                errorElement.textContent = message;
+                errorElement.style.opacity = '1';
+            }
+
+            function clearErrors() {
+                phoneError.textContent = '';
+                amountError.textContent = '';
+                operatorError.textContent = '';
+                phoneError.style.opacity = '0';
+                amountError.style.opacity = '0';
+                operatorError.style.opacity = '0';
+            }
+
+            // Validation du numéro de téléphone (7 ou 10 chiffres)
+            function isValidPhoneNumber(phone) {
+                return /^[0-9]{7,10}$/.test(phone);
+            }
+
+            // Validation des données
+            function validateForm(operator, phone, amount) {
+                clearErrors();
+                let isValid = true;
+
+                if (!operator) {
+                    showError('operatorError', 'Veuillez sélectionner un opérateur');
+                    isValid = false;
+                }
+
+                if (!isValidPhoneNumber(phone)) {
+                    showError('phoneError', 'Le numéro doit contenir 7 à 10 chiffres');
+                    isValid = false;
+                }
+
+                if (amount < 5000) {
+                    showError('amountError', 'Le montant minimum est de 5000 FCFA');
+                    isValid = false;
+                }
+                
+                return isValid;
+            }
+
+            // Validation en temps réel du numéro de téléphone
+            phoneInput.addEventListener('input', function() {
+                phoneError.textContent = '';
+                phoneError.style.opacity = '0';
+            });
+
+            // Validation en temps réel du montant
+            amountInput.addEventListener('input', function() {
+                const amount = parseInt(this.value);
+                if (amount < 5000) {
+                    showError('amountError', 'Le montant minimum est de 5000 FCFA');
+                } else {
+                    amountError.textContent = '';
+                    amountError.style.opacity = '0';
+                }
+            });
+
+            // Vérifier l'authentification au chargement
+            onAuthStateChanged(auth, (user) => {
+                if (!user) {
+                    showNotification('Veuillez vous connecter pour continuer', 'error-notification');
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                }
+            });
+
+            // Gestion de la soumission du formulaire
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const user = auth.currentUser;
+                if (!user) {
+                    showNotification('Veuillez vous connecter pour continuer', 'error-notification');
+                    return;
+                }
+
+                const operator = document.querySelector('input[name="operator"]:checked')?.value;
+                const phone = phoneInput.value;
+                const amount = parseInt(amountInput.value);
+
+                if (!validateForm(operator, phone, amount)) {
+                    return;
+                }
+
+                showLoading();
+
+                try {
+                    // Créer l'objet de recharge
+                    const rechargeData = {
+                        operator: operator,
+                        phone: phone,
+                        amount: amount,
+                        operatorNumber: operatorNumbers[operator],
+                        date: new Date().toISOString(),
+                        userId: user.uid,
+                        userEmail: user.email,
+                        status: 'pending'
+                    };
+
+                    // Stocker dans sessionStorage
+                    sessionStorage.setItem('rechargeData', JSON.stringify(rechargeData));
+
+                    // Sauvegarder dans Firebase
+                    const rechargeRef = ref(db, `recharges/${user.uid}/${Date.now()}`);
+                    await set(rechargeRef, rechargeData);
+
+                    // Rediriger vers la page de confirmation
+                    window.location.href = 'confirmation.html';
+
+                } catch (error) {
+                    console.error('Erreur:', error);
+                    showNotification('Une erreur est survenue. Veuillez réessayer.', 'error-notification');
+                } finally {
+                    hideLoading();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

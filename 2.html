@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes Mises</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background-color: #000000;
+            color: #343a40;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: #343a40;
+            color: white;
+            padding: 15px 0;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 20px;
+        }
+        
+        .bets-container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+        }
+        
+        .bet-card {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #007bff;
+        }
+        
+        .bet-card.active {
+            border-left-color: #28a745;
+        }
+        
+        .bet-card.finished {
+            border-left-color: #6c757d;
+        }
+        
+        .bet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .league-badge {
+            background-color: #007bff;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .status-badge.active {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .status-badge.finished {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .bet-details {
+            margin-bottom: 10px;
+        }
+        
+        .teams {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .score {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+        
+        .bet-info {
+            display: flex;
+            justify-content: space-between;
+            background-color: #e9ecef;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        
+        .bet-amount, .bet-potential, .bet-date {
+            font-size: 14px;
+        }
+        
+        .bet-amount span, .bet-potential span {
+            font-weight: bold;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: #6c757d;
+        }
+        
+        .empty-state p {
+            margin-bottom: 20px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #0069d9;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 10px;
+            color: #007bff;
+            text-decoration: none;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Mes Mises</h1>
+        </header>
+        
+        <div id="success-message" class="success-message">
+            Votre mise a été enregistrée avec succès !
+        </div>
+        
+        <div id="error-message" class="error-message">
+            Une erreur s'est produite. Veuillez réessayer.
+        </div>
+        
+        <div class="bets-container">
+            <div id="bets-list">
+                <div class="loading">Chargement de vos mises...</div>
+            </div>
+            
+            <div class="back-links">
+                <a href="index.html" class="back-link">← Retour aux matchs</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import des modules Firebase via CDN -->
+
+<script type="module">
+    // Import des modules Firebase via CDN
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+import { getDatabase, ref, set, push, get, onValue, query, orderByChild } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+
+// Configuration Firebase
+const firebaseConfig = {
+    apiKey: "AIzaSyCma9f6DgVY24WG3GL5K5sDkxvUww6iLvo",
+    authDomain: "parisien-foot.firebaseapp.com",
+    databaseURL: "https://parisien-foot-default-rtdb.firebaseio.com",
+    projectId: "parisien-foot",
+    storageBucket: "parisien-foot.firebasestorage.app",
+    messagingSenderId: "644508637847",
+    appId: "1:644508637847:web:3aeb0ae7a37ce3b0a067d2"
+};
+
+// Initialiser Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const database = getDatabase(app);
+
+// Référence à l'élément où nous afficherons les mises
+const betsListContainer = document.getElementById('bets-list');
+const successMessage = document.getElementById('success-message');
+const errorMessage = document.getElementById('error-message');
+
+// Fonction pour afficher les mises
+function displayBets(bets) {
+    if (!bets || bets.length === 0) {
+        // Afficher un message si aucune mise n'a été placée
+        betsListContainer.innerHTML = `
+            <div class="empty-state">
+                <p>Vous n'avez pas encore placé de mise.</p>
+                <a href="index.html" class="btn">Voir les matchs disponibles</a>
+            </div>
+        `;
+        return;
+    }
+    
+    // Afficher les mises
+    let betsHTML = '';
+    
+    bets.forEach(bet => {
+        // Vérifier si les propriétés existent et ont des valeurs valides
+        const league = typeof bet.league === 'string' && bet.league ? bet.league : "Ligue inconnue";
+        const status = typeof bet.status === 'string' && bet.status ? bet.status : "active";
+        const statusText = status === 'active' ? 'En cours' : 'Terminé';
+        const teams = typeof bet.teams === 'string' && bet.teams ? bet.teams : "Match inconnu";
+        
+        // Traitement du score avec vérification complète
+        let scoreText = "-";
+        if (bet.score && typeof bet.score === 'string' && 
+            bet.score !== "null" && bet.score !== "undefined" && 
+            bet.score !== "À venir" && bet.score.trim() !== "") {
+            scoreText = bet.score;
+        }
+        
+        // Pour les montants, s'assurer qu'ils sont des nombres ou des chaînes valides
+        const amount = bet.amount ? bet.amount : 0;
+        const potentialWinnings = bet.potentialWinnings ? bet.potentialWinnings : 0;
+        
+        // Pour la date, s'assurer qu'elle est lisible
+        let dateText = "Date inconnue";
+        if (typeof bet.date === 'string' && bet.date && bet.date !== "null" && bet.date !== "undefined") {
+            dateText = bet.date;
+        } else if (bet.timestamp) {
+            // Si pas de date mais un timestamp, créer une date à partir du timestamp
+            const date = new Date(bet.timestamp);
+            dateText = date.toLocaleDateString('fr-FR');
+        }
+        
+        betsHTML += `
+            <div class="bet-card ${status}">
+                <div class="bet-header">
+                    <div class="league-badge">${league}</div>
+                    <div class="status-badge ${status}">${statusText}</div>
+                </div>
+                <div class="bet-details">
+                    <div class="teams">${teams}</div>
+                    <div class="score">Score: ${scoreText}</div>
+                </div>
+                <div class="bet-info">
+                    <div class="bet-amount">Mise: <span>${amount} FCFA</span></div>
+                    <div class="bet-potential">Gain potentiel: <span>${potentialWinnings} FCFA</span></div>
+                    <div class="bet-date">${dateText}</div>
+                </div>
+            </div>
+        `;
+    });
+    
+    // Assigner le HTML construit au conteneur (cette ligne était incomplète dans votre code)
+    betsListContainer.innerHTML = betsHTML;
+}
+
+// Vérifier si l'utilisateur est connecté
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        // Utilisateur connecté
+        const userId = user.uid;
+        
+        // Vérifier si on vient juste de placer une mise
+        const betAmount = localStorage.getItem('betAmount');
+        const betPotentialWinnings = localStorage.getItem('betPotentialWinnings');
+        // Garantir une date par défaut
+        const today = new Date();
+        const formattedToday = today.toLocaleDateString('fr-FR');
+        const betDate = localStorage.getItem('betDate') || formattedToday;
+        
+        // S'il n'y a pas de mise récente, masquer le message de succès
+        if (!betAmount) {
+            successMessage.style.display = 'none';
+        }
+        
+        // Récupérer les données du match depuis le localStorage
+        const matchId = localStorage.getItem('selectedMatchId');
+        const league = localStorage.getItem('selectedMatchLeague');
+        const teams = localStorage.getItem('selectedMatchTeams');
+        
+        // Traitement correct du score
+        const scoreFromStorage = localStorage.getItem('selectedMatchScore');
+        // Si le score est null, vide, "À venir" ou non défini, on utilise "-" à la place
+        const score = (scoreFromStorage && scoreFromStorage !== "null" && 
+                      scoreFromStorage !== "undefined" && scoreFromStorage !== "À venir" &&
+                      scoreFromStorage.trim() !== "") 
+                      ? scoreFromStorage : "-";
+        
+        const percentage = localStorage.getItem('selectedMatchPercentage');
+        const time = localStorage.getItem('selectedMatchTime');
+        
+        // Si on vient de placer une mise, l'ajouter à Firebase
+        if (betAmount && matchId) {
+            try {
+                // Garantir des valeurs par défaut pour toutes les propriétés
+                const newBet = {
+                    matchId: matchId,
+                    league: league || "Ligue inconnue",
+                    teams: teams || "Match inconnu",
+                    score: score, // Utilise le score corrigé
+                    percentage: percentage || "1.0",
+                    time: time || "-",
+                    amount: betAmount,
+                    potentialWinnings: betPotentialWinnings,
+                    date: betDate,
+                    status: 'active',
+                    timestamp: Date.now()
+                };
+                
+                // Ajouter la mise à Firebase
+                const betsRef = ref(database, `users/${userId}/bets`);
+                const newBetRef = push(betsRef);
+                set(newBetRef, newBet)
+                    .then(() => {
+                        // Succès: afficher le message et effacer les données de la mise actuelle
+                        successMessage.style.display = 'block';
+                        errorMessage.style.display = 'none';
+                        
+                        // Ajouter un délai pour s'assurer que les données sont correctement affichées
+                        setTimeout(() => {
+                            localStorage.removeItem('betAmount');
+                            localStorage.removeItem('betPotentialWinnings');
+                            localStorage.removeItem('betDate');
+                            localStorage.removeItem('selectedMatchId');
+                            localStorage.removeItem('selectedMatchLeague');
+                            localStorage.removeItem('selectedMatchTeams');
+                            localStorage.removeItem('selectedMatchScore');
+                            localStorage.removeItem('selectedMatchPercentage');
+                            localStorage.removeItem('selectedMatchTime');
+                        }, 2000); // 2 secondes de délai
+                    })
+                    .catch((error) => {
+                        console.error("Erreur lors de l'ajout de la mise:", error);
+                        errorMessage.style.display = 'block';
+                        successMessage.style.display = 'none';
+                    });
+            } catch (error) {
+                console.error("Une erreur s'est produite:", error);
+                errorMessage.style.display = 'block';
+                successMessage.style.display = 'none';
+            }
+        }
+        
+        // Récupérer les mises de l'utilisateur depuis Firebase
+        const userBetsRef = ref(database, `users/${userId}/bets`);
+        const betsQuery = query(userBetsRef, orderByChild('timestamp'));
+        
+        onValue(betsQuery, (snapshot) => {
+            try {
+                const betsData = snapshot.val();
+                
+                if (betsData) {
+                    // Convertir l'objet en tableau et trier par timestamp (du plus récent au plus ancien)
+                    const betsArray = Object.entries(betsData).map(([id, bet]) => {
+                        // Vérifier et traiter correctement le score
+                        let scoreValue = bet.score;
+                        if (!scoreValue || scoreValue === "null" || scoreValue === "undefined" || 
+                            scoreValue === "À venir" || scoreValue.trim() === "") {
+                            scoreValue = "-";
+                        }
+                        
+                        return {
+                            id,
+                            league: bet.league || "Ligue inconnue",
+                            teams: bet.teams || "Match inconnu",
+                            score: scoreValue, // Score corrigé
+                            percentage: bet.percentage || "1.0",
+                            time: bet.time || "-",
+                            amount: bet.amount || 0,
+                            potentialWinnings: bet.potentialWinnings || 0,
+                            date: bet.date || new Date(bet.timestamp || Date.now()).toLocaleDateString('fr-FR'),
+                            status: bet.status || 'active',
+                            timestamp: bet.timestamp || Date.now()
+                        };
+                    });
+                    
+                    betsArray.sort((a, b) => b.timestamp - a.timestamp);
+                    
+                    // Afficher les mises
+                    displayBets(betsArray);
+                } else {
+                    // Aucune mise trouvée
+                    displayBets([]);
+                }
+            } catch (error) {
+                console.error("Erreur lors du chargement des mises:", error);
+                betsListContainer.innerHTML = `
+                    <div class="empty-state">
+                        <p>Une erreur s'est produite lors du chargement de vos mises.</p>
+                        <button class="btn" onclick="window.location.reload()">Réessayer</button>
+                    </div>
+                `;
+            }
+        }, (error) => {
+            console.error("Erreur lors de la récupération des mises:", error);
+            betsListContainer.innerHTML = `
+                <div class="empty-state">
+                    <p>Une erreur s'est produite lors du chargement de vos mises.</p>
+                    <button class="btn" onclick="window.location.reload()">Réessayer</button>
+                </div>
+            `;
+        });
+        
+    } else {
+        // Utilisateur non connecté, rediriger vers la page de connexion
+        window.location.href = 'login.html';
+    }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historique des Retraits</title>
+    <style>
+        :root {
+            --primary-color: #4a6cfa;
+            --secondary-color: #f8f9fa;
+            --text-color: #333;
+            --light-gray: #e9ecef;
+            --border-radius: 12px;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: var(--text-color);
+            padding-bottom: 80px;
+        }
+        
+        .header {
+            background-color: white;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+        }
+        
+        .back-arrow {
+            margin-right: 15px;
+            padding: 8px;
+            border-radius: 50%;
+            background-color: var(--light-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .back-arrow:hover {
+            background-color: #d1d5db;
+        }
+        
+        .page-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        .row:last-child {
+            border-bottom: none;
+        }
+        
+        .left-section {
+            display: flex;
+            align-items: center;
+        }
+        
+        .icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            opacity: 0.7;
+        }
+        
+        .label {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        
+        .value {
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+        
+        .black-text {
+            color: #000;
+            font-weight: 600;
+        }
+        
+        .blue-text {
+            color: var(--primary-color);
+        }
+        
+        .orange-text {
+            color: #fd7e14;
+        }
+        
+        .green-text {
+            color: var(--success-color);
+        }
+        
+        .no-history {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 40px 20px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            color: #6c757d;
+            font-size: 1rem;
+        }
+        
+        #history-container {
+            margin-top: 20px;
+        }
+        
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .status-pending {
+            background-color: rgba(255, 193, 7, 0.15);
+            color: #d39e00;
+        }
+        
+        .status-completed {
+            background-color: rgba(40, 167, 69, 0.15);
+            color: #28a745;
+        }
+        
+        .status-rejected {
+            background-color: rgba(220, 53, 69, 0.15);
+            color: #dc3545;
+        }
+        
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100px;
+        }
+        
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary-color);
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 576px) {
+            .header {
+                padding: 15px;
+            }
+            
+            .card {
+                padding: 15px;
+            }
+            
+            .label, .value {
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="#" class="back-arrow">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+        </a>
+        <h1 class="page-title">Historique des Retraits</h1>
+    </div>
+    
+    <div class="container">
+        <div id="loading" class="loading">
+            <div class="loading-spinner"></div>
+        </div>
+        <div id="history-container">
+            <!-- Historique des retraits sera affiché ici -->
+        </div>
+    </div>
+
+   <script type="module">
+     // Import des modules Firebase via CDN
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+    import { getDatabase, ref, set, get, push, update, onValue, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
+    import { getStorage } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-storage.js";
+
+    // Configuration Firebase
+    const firebaseConfig = {
+        apiKey: "AIzaSyCma9f6DgVY24WG3GL5K5sDkxvUww6iLvo",
+        authDomain: "parisien-foot.firebaseapp.com",
+        databaseURL: "https://parisien-foot-default-rtdb.firebaseio.com",
+        projectId: "parisien-foot",
+        storageBucket: "parisien-foot.firebasestorage.app",
+        messagingSenderId: "644508637847",
+        appId: "1:644508637847:web:3aeb0ae7a37ce3b0a067d2"
+    };
+        
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const database = getDatabase(app);
+
+    function formatAmount(amount) {
+        return `${amount.toLocaleString('fr-FR')} FCFA`;
+    }
+
+    function formatDate(timestamp) {
+        return new Date(timestamp).toLocaleString('fr-FR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+
+    function getStatusStyle(status) {
+        const statusLower = status.toLowerCase();
+        if (statusLower.includes('en cours') || statusLower.includes('pending')) {
+            return 'status-pending';
+        } else if (statusLower.includes('terminé') || statusLower.includes('completed') || statusLower.includes('succès')) {
+            return 'status-completed';
+        } else if (statusLower.includes('rejeté') || statusLower.includes('rejected') || statusLower.includes('échoué')) {
+            return 'status-rejected';
+        }
+        return '';
+    }
+
+    function createWithdrawalCard(withdrawal, key) {
+        const statusClass = getStatusStyle(withdrawal.status);
+        return `
+            <div class="card" data-id="${key}">
+                <div class="row">
+                    <div class="left-section">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0yMSA1bC0xMCA5LTEwLTkiLz48cGF0aCBkPSJNMjEgMTlsLTEwLTktMTAgOSIvPjwvc3ZnPg==" alt="Retirer" class="icon">
+                        <span class="label black-text">Montant demandé</span>
+                    </div>
+                    <span class="value black-text">${formatAmount(withdrawal.amount)}</span>
+                </div>
+
+                <div class="row">
+                    <div class="left-section">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxjaXJjbGUgY3g9IjEyIiBjeT0iMTIiIHI9IjEwIi8+PHBvbHlsaW5lIHBvaW50cz0iMTIgNiAxMiAxMiAxNiAxNCIvPjwvc3ZnPg==" alt="Temps" class="icon">
+                        <span class="label">Date de demande</span>
+                    </div>
+                    <span class="value">${formatDate(withdrawal.timestamp)}</span>
+                </div>
+
+                <div class="row">
+                    <div class="left-section">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxjaXJjbGUgY3g9IjEyIiBjeT0iMTIiIHI9IjEwIi8+PGxpbmUgeDE9IjEyIiB5MT0iMTYiIHgyPSIxMiIgeTI9IjEyIi8+PGxpbmUgeDE9IjEyIiB5MT0iOCIgeDI9IjEyIiB5Mj0iOCIvPjwvc3ZnPg==" alt="Statut" class="icon">
+                        <span class="label">Statut</span>
+                    </div>
+                    <span class="value status-badge ${statusClass}">${withdrawal.status}</span>
+                </div>
+
+                <div class="row">
+                    <div class="left-section">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxjaXJjbGUgY3g9IjEyIiBjeT0iMTIiIHI9IjEwIi8+PGxpbmUgeDE9IjEyIiB5MT0iOCIgeDI9IjEyIiB5Mj0iMTYiLz48bGluZSB4MT0iOCIgeTE9IjEyIiB4Mj0iMTYiIHkyPSIxMiIvPjwvc3ZnPg==" alt="Montant" class="icon">
+                        <span class="label">Montant net</span>
+                    </div>
+                    <span class="value orange-text">${formatAmount(withdrawal.amount - withdrawal.fees)}</span>
+                </div>
+            </div>
+        `;
+    }
+
+    function displayWithdrawalHistory(history) {
+        const container = document.getElementById('history-container');
+        const loadingElement = document.getElementById('loading');
+        
+        if (loadingElement) {
+            loadingElement.style.display = 'none';
+        }
+        
+        if (!history || Object.keys(history).length === 0) {
+            container.innerHTML = `
+                <div class="no-history">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#6c757d" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                        <line x1="8" y1="14" x2="8" y2="14"></line>
+                        <line x1="12" y1="14" x2="12" y2="14"></line>
+                        <line x1="16" y1="14" x2="16" y2="14"></line>
+                        <line x1="8" y1="18" x2="8" y2="18"></line>
+                        <line x1="12" y1="18" x2="12" y2="18"></line>
+                        <line x1="16" y1="18" x2="16" y2="18"></line>
+                    </svg>
+                    <p style="margin-top: 20px;">Aucun historique de retrait disponible</p>
+                </div>`;
+            return;
+        }
+
+        container.innerHTML = '';
+        Object.entries(history)
+            .sort(([, a], [, b]) => b.timestamp - a.timestamp)
+            .forEach(([key, withdrawal]) => {
+                container.innerHTML += createWithdrawalCard(withdrawal, key);
+            });
+    }
+
+    // Ajouter une fonction pour afficher un message d'erreur
+    function showError(message) {
+        const container = document.getElementById('history-container');
+        const loadingElement = document.getElementById('loading');
+        
+        if (loadingElement) {
+            loadingElement.style.display = 'none';
+        }
+        
+        container.innerHTML = `
+            <div class="no-history">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#dc3545" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12" y2="16"></line>
+                </svg>
+                <p style="margin-top: 20px; color: #dc3545;">${message}</p>
+            </div>`;
+    }
+
+    // Vérification que les éléments DOM existent avant d'y accéder
+    document.addEventListener('DOMContentLoaded', () => {
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const historyRef = ref(database, `users/${user.uid}/withdrawalHistory`);
+                
+                onValue(historyRef, (snapshot) => {
+                    const history = snapshot.val();
+                    displayWithdrawalHistory(history);
+                }, (error) => {
+                    console.error("Erreur lors de la récupération des données:", error);
+                    showError("Impossible de charger l'historique des retraits. Veuillez réessayer plus tard.");
+                });
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
+
+        const backArrow = document.querySelector('.back-arrow');
+        if (backArrow) {
+            backArrow.addEventListener('click', (e) => {
+                e.preventDefault();
+                history.back();
+            });
+        }
+    });
+</script> 
+</body>
+</html>

@@ -1,0 +1,82 @@
+<div id="grid-container" class="grid-container">
+    <div class="row">
+        <div id="principal-balance-section" class="section">
+            <div class="section-title">
+                <span class="icon"><i class="fas fa-user"></i></span>
+                Solde principal de Miss.
+            </div>
+            <div id="main-balance" class="section-value zero-value">0 FCFA</div>
+        </div>
+        
+        <div id="deposit-balance-section" class="section">
+            <div class="section-title">
+                <span class="icon"><i class="fas fa-wallet"></i></span>
+                Total de depot
+            </div>
+            <div id="deposit-balance" class="section-value zero-value">0 FCFA</div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div id="withdrawal-balance-section" class="section">
+            <div class="section-title">
+                <span class="icon"><i class="fas fa-money-bill-wave"></i></span>
+                Total de recharge
+            </div>
+            <div id="withdrawal-balance" class="section-value zero-value">0 FCFA</div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .grid-container {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px;
+    }
+    
+    .row {
+        display: flex;
+        gap: 15px;
+    }
+    
+    .row:first-child {
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .row:first-child .section {
+        flex: 1;
+    }
+    
+    .row:last-child .section {
+        width: 100%;
+    }
+    
+    .section {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 15px;
+        background-color: #fff;
+    }
+    
+    .section-title {
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 10px;
+    }
+    
+    .section-value {
+        font-size: 1.5em;
+        color: #0066cc;
+    }
+    
+    .zero-value {
+        color: #999;
+    }
+    
+    .icon {
+        margin-right: 5px;
+    }
+</style>

@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription et Connexion</title>
+    <style>
+        * {margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif;}
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: url('https://image.noelshack.com/fichiers/2025/15/3/1744210640-ballon-officiel-ligue-1-uber-eats.jpg') center/cover;
+        }
+        .form-container {
+            width: 300px; 
+            overflow: hidden;
+            background-color: rgba(0,0,0,0.6);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+        .tabs {
+            display: flex;
+        }
+        .tab {
+            flex: 1;
+            padding: 12px 10px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Styles de saisons pour les onglets */
+        #tab-login {
+            background-color: #4361ee; /* Hiver - bleu froid */
+        }
+        #tab-signup {
+            background-color: #06d6a0; /* Printemps - vert frais */
+        }
+        .tab.active#tab-login {
+            background-color: #3051cc; /* Hiver actif - bleu plus profond */
+        }
+        .tab.active#tab-signup {
+            background-color: #05b384; /* Printemps actif - vert plus profond */
+        }
+        
+        .tab:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: #fff;
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+        
+        .tab.active:after {
+            transform: scaleX(1);
+        }
+        
+        .tab-content {
+            padding: 20px 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            font-size: 12px;
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 13px;
+            background-color: rgba(255,255,255,0.8);
+            transition: all 0.3s;
+        }
+        
+        .form-group input:focus {
+            background-color: rgba(255,255,255,0.95);
+            outline: none;
+            box-shadow: 0 0 5px rgba(255,255,255,0.5);
+        }
+        
+        /* Styles de saisons pour les boutons */
+        #login button {
+            background: linear-gradient(135deg, #4361ee, #3051cc); /* Hiver */
+        }
+        #login button:hover {
+            background: linear-gradient(135deg, #3051cc, #264bc1);
+        }
+        
+        #signup button {
+            background: linear-gradient(135deg, #06d6a0, #05b384); /* Printemps */
+        }
+        #signup button:hover {
+            background: linear-gradient(135deg, #05b384, #049a72);
+        }
+        
+        button {
+            width: 100%;
+            padding: 10px;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: all 0.3s;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .form-footer {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 12px;
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        }
+        
+        .form-footer a {
+            color: #fff;
+            font-weight: 500;
+            text-decoration: underline;
+        }
+        
+        .hidden {
+            display: none;
+        }
+
+        .referral-status {
+            margin-top: 5px;
+            font-size: 12px;
+            padding: 5px;
+            border-radius: 3px;
+        }
+
+        .referral-status.valid {
+            color: #05b384;
+            background-color: rgba(5, 179, 132, 0.1);
+        }
+
+        .referral-status.invalid {
+            color: #ff4d6d;
+            background-color: rgba(255, 77, 109, 0.1);
+        }
+
+        #loginError, #signupError {
+            color: #ff4d6d;
+            background-color: rgba(255, 77, 109, 0.1);
+            padding: 8px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            display: none;
+        }
+
+        #signupSuccess {
+            color: #05b384;
+            background-color: rgba(5, 179, 132, 0.1);
+            padding: 8px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .form-container {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="main-container" class="form-container">
+        <div class="tabs">
+            <div id="tab-login" class="tab active" onclick="showTab('login')">Connexion</div>
+            <div id="tab-signup" class="tab" onclick="showTab('signup')">Inscription</div>
+        </div>
+        
+        <div id="login" class="tab-content">
+            <form id="loginFormData">
+                <div id="loginError"></div>
+                <div class="form-group">
+                    <label for="loginTelephone">Numéro de compte</label>
+                    <input type="tel" id="loginTelephone" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Mot de passe</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                
+                <div id="season-container" style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                    <div style="flex: 0 0 40%;">
+                        <label for="season-display" style="font-size: 12px; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">Code saison:</label>
+                        <div id="season-display" style="background-color: rgba(180, 180, 180, 0.8); padding: 8px; border-radius: 5px; font-weight: bold; letter-spacing: 1px; text-align: center; font-size: 14px; color: #333;"></div>
+                    </div>
+                    <div style="flex: 1;">
+                        <label for="season-verification" style="font-size: 12px; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">Saisir le code:</label>
+                        <input type="text" id="season-verification" required style="width: 100%; padding: 8px; border-radius: 5px; font-size: 13px; border: none;">
+                    </div>
+                </div>
+                
+                <div id="forgot-password" style="text-align: right; margin-bottom: 10px;">
+                    <a href="#" style="font-size: 11px; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">Mot de passe oublié?</a>
+                </div>
+                <button id="loginButton" type="submit">Se connecter</button>
+                <div class="form-footer">
+                    Pas encore de compte? <a href="#" onclick="showTab('signup')">S'inscrire</a>
+                </div>
+            </form>
+        </div>
+        
+        <div id="signup" class="tab-content hidden">
+            <form id="signupFormData">
+                <div id="signupError"></div>
+                <div id="signupSuccess"></div>
+                <div class="form-group">
+                    <label for="signupUsername">Nom complet</label>
+                    <input type="text" id="signupUsername" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupTelephone">Numéro de compte</label>
+                    <input type="tel" id="signupTelephone" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupPassword">Mot de passe</label>
+                    <input type="password" id="signupPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirmer le mot de passe</label>
+                    <input type="password" id="confirmPassword" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="referralCode">Code de parrainage</label>
+                    <input type="text" id="referralCode">
+                    <div id="referralStatus" class="referral-status"></div>
+                </div>
+                <button id="signupButton" type="submit">S'inscrire</button>
+                <div class="form-footer">
+                    Déjà inscrit? <a href="#" onclick="showTab('login')">Se connecter</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // Fonction pour générer un code de saison aléatoire
+        function generateSeasonCode() {
+            const seasons = ['HIVER', 'PRINT', 'ÉTÉ', 'AUTOM'];
+            const randomSeason = seasons[Math.floor(Math.random() * seasons.length)];
+            const randomNum = Math.floor(1000 + Math.random() * 9000); // Nombre à 4 chiffres
+            return `${randomSeason}-${randomNum}`;
+        }
+        
+        // Génération du code de saison au chargement
+        window.onload = function() {
+            const seasonDisplayElement = document.getElementById('season-display');
+            if (seasonDisplayElement) {
+                seasonDisplayElement.textContent = generateSeasonCode();
+                // Permettre la sélection du texte pour le copier
+                seasonDisplayElement.onclick = function() {
+                    const selection = window.getSelection();
+                    const range = document.createRange();
+                    range.selectNodeContents(this);
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+                    try {
+                        document.execCommand('copy');
+                        alert('Code copié!');
+                    } catch (err) {
+                        console.error('Impossible de copier le texte', err);
+                    }
+                    selection.removeAllRanges();
+                };
+            }
+        };
+        
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabName).classList.remove('hidden');
+            
+            if (tabName === 'login') {
+                document.getElementById('tab-login').classList.add('active');
+                // Régénérer le code de saison quand on revient à l'onglet connexion
+                const seasonDisplayElement = document.getElementById('season-display');
+                if (seasonDisplayElement) {
+                    seasonDisplayElement.textContent = generateSeasonCode();
+                }
+                // Vider le champ de vérification
+                const verificationInput = document.getElementById('season-verification');
+                if (verificationInput) {
+                    verificationInput.value = '';
+                }
+            } else {
+                document.getElementById('tab-signup').classList.add('active');
+            }
+        }
+        
+        // Ancien gestionnaire d'événements pour la compatibilité
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('loginFormData');
+            if (loginForm) {
+                loginForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const seasonCode = document.getElementById('season-display').textContent;
+                    const userInput = document.getElementById('season-verification').value;
+                    
+                    if (!userInput) {
+                        alert('Veuillez saisir le code de saison');
+                        return;
+                    }
+                    
+                    if (userInput !== seasonCode) {
+                        alert('Code de saison incorrect');
+                        return;
+                    }
+                    
+                    alert('Connexion réussie avec le code de saison: ' + seasonCode);
+                });
+            }
+        });
+    </script>
+    
+   <script type="module">
+        // Import des modules Firebase via CDN
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+        import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
+        import { getStorage } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-storage.js";
+
+        // Configuration Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyCma9f6DgVY24WG3GL5K5sDkxvUww6iLvo",
+            authDomain: "parisien-foot.firebaseapp.com",
+            databaseURL: "https://parisien-foot-default-rtdb.firebaseio.com",
+            projectId: "parisien-foot",
+            storageBucket: "parisien-foot.firebasestorage.app",
+            messagingSenderId: "644508637847",
+            appId: "1:644508637847:web:3aeb0ae7a37ce3b0a067d2"
+        };
+
+        // Initialisation Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const database = getDatabase(app);
+        const storage = getStorage(app);
+
+        // Classe utilitaire
+        class Utils {
+            static generateReferralCode() {
+                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+                return Array.from({ length: 6 }, () => 
+                    chars.charAt(Math.floor(Math.random() * chars.length))
+                ).join('');
+            }
+
+            static async checkReferralCode(code) {
+                if (!code) return null;
+                const referralRef = ref(database, 'users');
+                const snapshot = await get(referralRef);
+                
+                if (snapshot.exists()) {
+                    const users = snapshot.val();
+                    for (const userId in users) {
+                        if (users[userId].referralCode === code) {
+                            return {
+                                userId,
+                                username: users[userId].username
+                            };
+                        }
+                    }
+                }
+                return null;
+            }
+
+            static showError(elementId, message) {
+                const element = document.getElementById(elementId);
+                if (element) {
+                    element.textContent = message;
+                    element.style.display = message ? 'block' : 'none';
+                }
+            }
+
+            static showSuccess(elementId, message) {
+                const element = document.getElementById(elementId);
+                if (element) {
+                    element.textContent = message;
+                    element.style.display = message ? 'block' : 'none';
+                }
+            }
+
+            static clearMessages() {
+                ['loginError', 'signupError', 'signupSuccess', 'referralStatus'].forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        element.textContent = '';
+                        element.style.display = 'none';
+                        element.className = element.className.replace(/(valid|invalid)/g, '').trim();
+                    }
+                });
+            }
+
+            static updateReferralStatus(isValid, message) {
+                const statusElement = document.getElementById('referralStatus');
+                if (statusElement) {
+                    statusElement.textContent = message;
+                    statusElement.className = `referral-status ${isValid ? 'valid' : 'invalid'}`;
+                    statusElement.style.display = message ? 'block' : 'none';
+                }
+            }
+        }
+
+        // Classe de gestion des formulaires
+        class FormManager {
+            static async handleSignup(event) {
+                event.preventDefault();
+                Utils.clearMessages();
+
+                try {
+                    const username = document.getElementById("signupUsername").value;
+                    const telephone = document.getElementById("signupTelephone").value;
+                    const email = `${telephone}@temp.com`;
+                    const password = document.getElementById("signupPassword").value;
+                    const confirmPassword = document.getElementById("confirmPassword").value;
+                    const referralCode = document.getElementById("referralCode")?.value;
+
+                    // Validations
+                    if (!username || !telephone || !password) {
+                        throw new Error("Veuillez remplir tous les champs requis");
+                    }
+
+                    if (password !== confirmPassword) {
+                        throw new Error("Les mots de passe ne correspondent pas");
+                    }
+
+                    if (password.length < 6) {
+                        throw new Error("Le mot de passe doit contenir au moins 6 caractères");
+                    }
+
+                    if (telephone.length < 8) {
+                        throw new Error("Numéro de téléphone invalide");
+                    }
+
+                    let referrerData = null;
+                    if (referralCode) {
+                        referrerData = await Utils.checkReferralCode(referralCode);
+                        if (!referrerData) {
+                            throw new Error("Code de parrainage invalide");
+                        }
+                    }
+
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    const user = userCredential.user;
+                    const newReferralCode = Utils.generateReferralCode();
+
+                    await set(ref(database, 'users/' + user.uid), {
+                        username,
+                        email,
+                        phoneNumber: telephone,
+                        balance: referrerData ? 100 : 0,
+                        referralCode: newReferralCode,
+                        referredBy: referrerData?.userId || null,
+                        createdAt: Date.now()
+                    });
+
+                    if (referrerData && referrerData.userId) {
+                        const referrerRef = ref(database, `users/${referrerData.userId}`);
+                        const referrerSnapshot = await get(referrerRef);
+                        
+                        if (referrerSnapshot.exists()) {
+                            const currentBalance = referrerSnapshot.val().balance || 0;
+                            await set(ref(database, `users/${referrerData.userId}/balance`), currentBalance + 10);
+                        }
+                    }
+
+                    Utils.showSuccess("signupSuccess", "Compte créé avec succès ! Redirection...");
+                    
+                    setTimeout(() => {
+                        window.location.href = "accueil.html";
+                    }, 1500);
+
+                } catch (error) {
+                    console.error("Erreur:", error);
+                    Utils.showError("signupError", error.message);
+                }
+            }
+
+            static async handleLogin(event) {
+                event.preventDefault();
+                Utils.clearMessages();
+
+                try {
+                    const telephone = document.getElementById("loginTelephone").value;
+                    const password = document.getElementById("loginPassword").value;
+                    const seasonCode = document.getElementById('season-display').textContent;
+                    const userInput = document.getElementById('season-verification').value;
+
+                    if (!telephone || !password) {
+                        throw new Error("Veuillez remplir tous les champs");
+                    }
+
+                    if (!userInput) {
+                        throw new Error("Veuillez saisir le code de saison");
+                    }
+                    
+                    if (userInput !== seasonCode) {
+                        throw new Error("Code de saison incorrect");
+                    }
+
+                    const email = `${telephone}@temp.com`;
+                    await signInWithEmailAndPassword(auth, email, password);
+                    window.location.href = "accueil.html";
+                } catch (error) {
+                    console.error("Erreur de connexion:", error);
+                    Utils.showError("loginError", error.message || "Erreur de connexion");
+                }
+            }
+
+            static async handleReferralCodeInput() {
+                const referralInput = document.getElementById('referralCode');
+                const code = referralInput.value.trim().toUpperCase();
+                
+                if (!code) {
+                    Utils.updateReferralStatus(true, '');
+                    return;
+                }
+
+                try {
+                    const referrerData = await Utils.checkReferralCode(code);
+                    if (referrerData) {
+                        Utils.updateReferralStatus(true, `Code valide ! Parrain: ${referrerData.username}`);
+                    } else {
+                        Utils.updateReferralStatus(false, 'Code de parrainage invalide');
+                    }
+                } catch (error) {
+                    Utils.updateReferralStatus(false, 'Erreur de vérification du code');
+                }
+            }
+
+            static handleReferralCodeFromURL() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const referralCode = urlParams.get('ref');
+                const referralCodeInput = document.getElementById('referralCode');
+                
+                if (referralCodeInput && referralCode) {
+                    referralCodeInput.value = referralCode.toUpperCase();
+                    FormManager.handleReferralCodeInput();
+                }
+            }
+        }
+
+        // Fonction utilitaire de debounce
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Initialisation au chargement de la page
+        document.addEventListener('DOMContentLoaded', () => {
+            const signupForm = document.getElementById("signupFormData");
+            const loginForm = document.getElementById("loginFormData");
+            const referralInput = document.getElementById("referralCode");
+
+            if (signupForm) {
+                signupForm.addEventListener("submit", FormManager.handleSignup);
+            }
+
+            if (loginForm) {
+                loginForm.addEventListener("submit", FormManager.handleLogin);
+            }
+
+            if (referralInput) {
+                referralInput.addEventListener("input", debounce(() => {
+                    FormManager.handleReferralCodeInput();
+                }, 500));
+            }
+
+            FormManager.handleReferralCodeFromURL();
+        });
+
+        // Surveillance de l'état de l'authentification
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                console.log("Utilisateur connecté:", user.uid);
+            } else {
+                console.log("Utilisateur déconnecté");
+            }
+        });
+    </script> 
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!-- Bottom Navigation avec icônes de ballon -->
+<style>
+    .bottom-nav {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: #ffffff;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        padding: 12px 0;
+        border-radius: 20px 20px 0 0;
+    }
+
+    .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-decoration: none;
+        color: #ffffff;
+        transition: all 0.3s ease;
+        padding: 8px 0;
+        width: 25%;
+    }
+
+    .nav-item.active {
+        color: #ffffff;
+        position: relative;
+    }
+
+    .nav-item.active::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        width: 40%;
+        height: 3px;
+        background-color: #ffffff;
+        border-radius: 3px;
+    }
+
+    .nav-icon {
+        margin-bottom: 4px;
+        transition: transform 0.2s ease;
+    }
+
+    .nav-item:hover .nav-icon {
+        transform: translateY(-3px);
+    }
+
+    .nav-label {
+        font-size: 12px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .nav-item:active {
+        transform: scale(0.95);
+    }
+        
+</style>
+
+<div class="bottom-nav">
+    <a href="accueil.html" class="nav-item active">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon">
+            <!-- Ballon de football -->
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            <path d="M2 12h20"/>
+        </svg>
+        <span class="nav-label">Paris</span>
+    </a>
+    <a href="investir.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon">
+            <!-- Ballon de basketball -->
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M4.93 4.93 19.07 19.07"/>
+            <path d="M19.07 4.93 4.93 19.07"/>
+            <path d="M12 2v20"/>
+            <path d="M2 12h20"/>
+        </svg>
+        <span class="nav-label">Liste des paris</span>
+    </a>
+    <a href="equipe.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon">
+            <!-- Ballon de rugby -->
+            <ellipse cx="12" cy="12" rx="10" ry="6"/>
+            <path d="M12 2v20"/>
+        </svg>
+        <span class="nav-label">Historique</span>
+    </a>
+    <a href="solde.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon">
+            <!-- Ballon de volleyball -->
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M5 12a7 7 0 0 0 14 0"/>
+            <path d="M5 12a7 7 0 0 1 14 0"/>
+            <path d="M12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7"/>
+        </svg>
+        <span class="nav-label">Mon compte</span>
+    </a>
+</div>
