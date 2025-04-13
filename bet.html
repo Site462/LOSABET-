@@ -3,281 +3,362 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Page de Mise - Paris Sportifs</title>
+    <title>Mes Mises</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Arial', sans-serif;
         }
         
         body {
-            background-color: #07060a;
-            color: #07060a;
-            margin: 0;
-            padding: 0;
+            background-color: #f5f5f5;
+            color: #333;
         }
         
         .container {
-            width: 100%;
-            background-color: #ffffff;
-            overflow: hidden;
             max-width: 800px;
             margin: 0 auto;
+            padding: 20px;
         }
         
         header {
-            background: linear-gradient(135deg, #8fff00, #ffffff);
+            background-color: #007bff;
             color: white;
-            padding: 20px;
+            padding: 15px 0;
             text-align: center;
-            font-size: 24px;
-            font-weight: bold;
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 20px;
+        }
+        
+        .bets-container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        .section {
-            padding: 20px;
-        }
-        
-        .section-title {
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 15px;
-            color: #555;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
-        .solde-container {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-        }
-        
-        .solde-box {
-            flex: 1;
-            padding: 15px;
-            border-radius: 8px;
-            background-color: #f8f9fa;
-            text-align: center;
-            margin: 0 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-        
-        .solde-box:first-child {
-            margin-left: 0;
-        }
-        
-        .solde-box:last-child {
-            margin-right: 0;
-        }
-        
-        .solde-label {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 8px;
-        }
-        
-        .solde-value {
-            font-size: 20px;
-            font-weight: bold;
-            color: #3a0ca3;
-        }
-        
-        .match-card {
-            background: linear-gradient(135deg, #4cc9f0, #4361ee);
-            border-radius: 8px;
-            padding: 15px;
-            color: white;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        
-        .match-teams {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-        
-        .match-info {
-            display: flex;
-            justify-content: space-between;
-        }
-        
-        .info-item {
-            text-align: center;
-            flex: 1;
-        }
-        
-        .info-label {
-            font-size: 12px;
-            opacity: 0.8;
-            margin-bottom: 5px;
-        }
-        
-        .info-value {
-            font-weight: bold;
-        }
-        
-        .mise-form {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-        
-        .mise-input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            margin-bottom: 15px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-        
-        .mise-input:focus {
-            border-color: #4361ee;
-            outline: none;
-        }
-        
-        .mise-button {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #3a0ca3, #4361ee);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        
-        .mise-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-        
-        .mise-button:disabled {
-            background: linear-gradient(135deg, #8982b0, #8195e9);
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-        
-        .gains {
-            margin-top: 15px;
-            text-align: center;
-            font-size: 18px;
-            padding: 10px;
-            background-color: #f0f0f0;
-            border-radius: 8px;
-        }
-        
-        .gains-value {
-            font-weight: bold;
-            color: #3a0ca3;
-            font-size: 22px;
-            margin-top: 5px;
+            margin-bottom: 20px;
         }
         
         .error-message {
-            color: #e63946;
-            font-size: 14px;
-            margin-top: -10px;
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+        }
+        
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+        }
+        
+        .bet-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
             margin-bottom: 15px;
-            display: none;
+            border-left: 4px solid #007bff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
         
-        .loader {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3a0ca3;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            animation: spin 1s linear infinite;
+        .bet-card.active {
+            border-left-color: #28a745;
+        }
+        
+        .bet-card.finished {
+            border-left-color: #6c757d;
+        }
+        
+        .bet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .league-badge {
+            background-color: #007bff;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .status-badge.active {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .status-badge.finished {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .bet-details {
+            margin-bottom: 10px;
+        }
+        
+        .teams {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        
+        .score {
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: #555;
+        }
+        
+        .bet-info {
+            display: flex;
+            justify-content: space-between;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            color: #333;
+        }
+        
+        .bet-amount, .bet-potential, .bet-date {
+            font-size: 14px;
+        }
+        
+        .bet-amount span, .bet-potential span {
+            font-weight: bold;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: #6c757d;
+        }
+        
+        .empty-state p {
+            margin-bottom: 20px;
+        }
+        
+        .btn {
             display: inline-block;
-            vertical-align: middle;
-            margin-right: 10px;
-            display: none;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
         
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .btn:hover {
+            background-color: #0069d9;
         }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 10px;
+            color: #007bff;
+            text-decoration: none;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+        }
+        
+        .balance-container {
+            display: flex;
+            justify-content: space-between;
+            background-color: #007bff;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .balance-box {
+            flex: 1;
+        }
+        
+        .balance-title {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        
+        .balance-amount {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        
+        .bottom-nav {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: #ffffff;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        padding: 12px 0;
+        border-radius: 20px 20px 0 0;
+    }
+
+    .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-decoration: none;
+        color: #95a5a6;
+        transition: all 0.3s ease;
+        padding: 8px 0;
+        width: 25%;
+    }
+
+    .nav-item.active {
+        color: #3498db;
+        position: relative;
+    }
+
+    .nav-item.active::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        width: 40%;
+        height: 3px;
+        background-color: #ff0a00;
+        border-radius: 3px;
+    }
+
+    .nav-icon {
+        margin-bottom: 4px;
+        transition: transform 0.2s ease;
+    }
+
+    .nav-item:hover .nav-icon {
+        transform: translateY(-3px);
+    }
+
+    .nav-label {
+        font-size: 12px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .nav-item:active {
+        transform: scale(0.95);
+    }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            Paris LOSABET 
-        </header>
-        
-        <div class="section">
-            <div class="solde-container">
-                <div class="solde-box">
-                    <div class="solde-label">Solde principal de mise</div>
-                    <div id="main-balance" class="solde-value">0 FCFA</div>
-                </div>
+        <div class="balance-container">
+            <div class="balance-box">
+                <div class="balance-title">Somme du paris</div>
+                <div class="balance-amount">0 FCFA</div>
+            </div>
+            <div class="balance-box">
+                <div class="balance-title">Mes gains potentiels</div>
+                <div class="balance-amount">0 FCFA</div>
             </div>
         </div>
         
-        <div class="section">
-            <div class="section-title">Palette d'information de matchs</div>
-            <div class="match-card">
-                <div id="teams-display" class="match-teams">Chargement</div>
-                <div class="match-info">
-                    <div class="info-item">
-                        <div class="info-label">Score prévu</div>
-                        <div id="score-display" class="info-value">Chargement</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Probabilités</div>
-                        <div id="percentage-display" class="info-value">Chargement</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Heure de jeu</div>
-                        <div id="time-display" class="info-value">Chargement</div>
-                    </div>
-                </div>
-                <div class="info-item" style="margin-top: 10px;">
-                    <div class="info-label">Chargement</div>
-                    <div id="league-display" class="info-value">Chargement</div>
-                </div>
-            </div>
+        <!-- Message de succès -->
+        <div id="success-message" class="success-message">
+            Votre mise a été placée avec succès!
         </div>
         
-        <div class="section">
-            <div class="section-title">Parier</div>
-            <form id="betting-form" class="mise-form">
-                <input type="number" id="bet-amount" class="mise-input" placeholder="Entrez votre mise en FCFA" min="100">
-                <div id="amount-error" class="error-message">Le montant minimum de mise est de 100 FCFA</div>
-                <div id="balance-error" class="error-message">Solde insuffisant pour placer cette mise</div>
-                
-                <button type="submit" id="submit-bet" class="mise-button">
-                    <span id="loader" class="loader"></span>
-                    Placer la mise
-                </button>
-            </form>
-            <div class="gains">
-                <div>Gains potentiels</div>
-                <div id="winnings-display" class="gains-value">0 FCFA</div>
-            </div>
+        <!-- Message d'erreur -->
+        <div id="error-message" class="error-message">
+            Une erreur s'est produite lors du placement de votre mise.
+        </div>
+        
+        <!-- Conteneur pour la liste des paris -->
+        <div id="bets-list" class="bets-container">
+            <!-- Les paris seront chargés ici dynamiquement -->
+            <div class="loading">Chargement de vos mises...</div>
         </div>
     </div>
+    
+    <!-- Barre de navigation inférieure -->
+        <div id="bottom-nav" class="bottom-nav">
+            <a href="accueil.html" id="nav-paris" class="nav-item active">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon">
+                    <!-- Ballon de football -->
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                    <path d="M2 12h20"/>
+                </svg>
+                <span class="nav-label">Paris</span>
+            </a>
+            <a href="mises.html" id="nav-liste-paris" class="nav-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon">
+                    <!-- Ballon de basketball -->
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M4.93 4.93 19.07 19.07"/>
+                    <path d="M19.07 4.93 4.93 19.07"/>
+                    <path d="M12 2v20"/>
+                    <path d="M2 12h20"/>
+                </svg>
+                <span class="nav-label">Liste des paris</span>
+            </a>
+            <a href="enregistrement.html" id="nav-historique" class="nav-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon">
+                    <!-- Ballon de rugby -->
+                    <ellipse cx="12" cy="12" rx="10" ry="6"/>
+                    <path d="M12 2v20"/>
+                </svg>
+                <span class="nav-label">Enregistrement</span>
+            </a>
+            <a href="solde.html" id="nav-compte" class="nav-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon">
+                    <!-- Ballon de volleyball -->
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M5 12a7 7 0 0 0 14 0"/>
+                    <path d="M5 12a7 7 0 0 1 14 0"/>
+                    <path d="M12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7"/>
+                </svg>
+                <span class="nav-label">Mon compte</span>
+            </a>
+        </div>
+    </div>
+    
 
-    <!-- Import des modules Firebase via CDN -->
-<script type="module">
-   // Import des modules Firebase
+    <!-- Scripts Firebase -->
+   <script type="module">
+ // Import des modules Firebase via CDN
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
-import { getDatabase, ref, set, get, update } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+import { getDatabase, ref, set, push, get, onValue, query, orderByChild } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
 
 // Configuration Firebase
 const firebaseConfig = {
@@ -290,467 +371,400 @@ const firebaseConfig = {
     appId: "1:644508637847:web:3aeb0ae7a37ce3b0a067d2"
 };
 
-// Initialisation Firebase
+// Initialiser Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const database = getDatabase(app);
 
-// Récupération des éléments du DOM
-const mainBalanceElement = document.getElementById('main-balance');
-const betAmountInput = document.getElementById('bet-amount');
-const winningsDisplay = document.getElementById('winnings-display');
-const bettingForm = document.getElementById('betting-form');
-const amountError = document.getElementById('amount-error');
-const balanceError = document.getElementById('balance-error');
-const submitButton = document.getElementById('submit-bet');
-const loader = document.getElementById('loader');
-const timeExpiredError = document.getElementById('time-expired-error'); // Élément pour afficher l'erreur de temps dépassé
+// Référence aux éléments DOM
+const betsListContainer = document.getElementById('bets-list');
+const successMessage = document.getElementById('success-message');
+const errorMessage = document.getElementById('error-message');
 
-// Variables globales
-let currentUser = null;
-let userBalances = {
-    mainBalance: 0,
-    volumeBalance: 0
-};
+/**
+ * Formate un nombre en tant que montant avec séparateur de milliers
+ * @param {number|string} amount - Le montant à formater
+ * @return {string} Le montant formaté
+ */
+function formatAmount(amount) {
+    // S'assurer que l'entrée est une chaîne pour nettoyage
+    const amountStr = String(amount);
+    
+    // Nettoyer la chaîne pour extraire uniquement les chiffres et la virgule/point
+    const cleanAmountStr = amountStr.replace(/[^\d.,]/g, '').replace(',', '.');
+    
+    // Convertir en nombre
+    let numAmount = parseFloat(cleanAmountStr);
+    
+    // Vérifier si c'est un nombre valide
+    if (isNaN(numAmount)) return "0 FCFA";
+    
+    // Formater avec séparateur de milliers
+    return numAmount.toLocaleString('fr-FR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    }) + " FCFA";
+}
 
-// Variables du match
-let matchId, league, teams, score, percentageRaw, time, percentage;
-let matchDateTime; // Variable pour stocker la date et l'heure du match
+/**
+ * Extrait un nombre à partir d'une chaîne formatée (avec ou sans devise)
+ * @param {string|number} amountStr - La chaîne contenant le montant
+ * @return {number} Le montant numérique
+ */
+function extractNumber(amountStr) {
+    if (typeof amountStr === 'number') return amountStr;
+    
+    // Nettoyer la chaîne pour extraire uniquement les chiffres et la virgule/point
+    const cleanStr = String(amountStr).replace(/[^\d.,]/g, '').replace(',', '.');
+    const num = parseFloat(cleanStr);
+    
+    return isNaN(num) ? 0 : num;
+}
 
-// Définir un nom cohérent pour le champ de solde principal
-const BALANCE_FIELD_NAME = 'balance';
+/**
+ * Affiche les mises dans le conteneur
+ * @param {Array} bets - Tableau des paris à afficher
+ */
+function displayBets(bets) {
+    if (!bets || bets.length === 0) {
+        // Afficher un message si aucune mise n'a été placée
+        betsListContainer.innerHTML = `
+            <div class="empty-state">
+                <p>Vous n'avez pas encore placé de mise.</p>
+                <a href="accueil.html" class="btn">Voir les matchs disponibles</a>
+            </div>
+        `;
+        return;
+    }
+    
+    // Filtrer pour n'afficher que les paris en cours
+    const activeBets = bets.filter(bet => bet.status === 'active');
+    
+    // Si aucun pari actif après filtrage
+    if (activeBets.length === 0) {
+        betsListContainer.innerHTML = `
+            <div class="empty-state">
+                <p>Vous n'avez pas de paris en cours actuellement.</p>
+                <a href="accueil.html" class="btn">Voir les matchs disponibles</a>
+            </div>
+        `;
+        return;
+    }
+    
+    // Afficher les mises actives uniquement
+    let betsHTML = '';
+    
+    activeBets.forEach(bet => {
+        // Vérifier si les propriétés existent et ont des valeurs valides
+        const league = typeof bet.league === 'string' && bet.league ? bet.league : "Ligue inconnue";
+        const status = typeof bet.status === 'string' && bet.status ? bet.status : "active";
+        const statusText = status === 'active' ? 'En cours' : 'Terminé';
+        const teams = typeof bet.teams === 'string' && bet.teams ? bet.teams : "Match inconnu";
+        
+        // Récupérer et formater le pourcentage
+        const percentage = bet.percentage ? bet.percentage : "1.0";
+        const formattedPercentage = percentage + "%";
+        
+        // Traitement du score avec vérification complète
+        let scoreText = "-";
+        if (bet.score && typeof bet.score === 'string' && 
+            bet.score !== "null" && bet.score !== "undefined" && 
+            bet.score !== "À venir" && bet.score.trim() !== "") {
+            scoreText = bet.score;
+        }
+        
+        // Pour les montants, utiliser notre fonction d'extraction et de formatage
+        const betAmount = extractNumber(bet.amount);
+        const amount = formatAmount(betAmount);
+        
+        // Convertir et nettoyer les gains potentiels
+        const potentialValue = extractNumber(bet.potentialWinnings);
+        const potentialWinnings = formatAmount(potentialValue);
+        
+        // Pour la date, s'assurer qu'elle est lisible
+        let dateText = "Date inconnue";
+        if (typeof bet.date === 'string' && bet.date && bet.date !== "null" && bet.date !== "undefined") {
+            dateText = bet.date;
+            
+            // Ajouter l'heure si disponible
+            if (bet.time && typeof bet.time === 'string' && bet.time !== "-") {
+                dateText += ` ${bet.time}`;
+            } else if (bet.timestamp) {
+                // Si timestamp disponible mais pas d'heure spécifique, afficher l'heure du timestamp
+                const date = new Date(bet.timestamp);
+                const hours = date.getHours().toString().padStart(2, '0');
+                const minutes = date.getMinutes().toString().padStart(2, '0');
+                const seconds = date.getSeconds().toString().padStart(2, '0');
+                dateText += ` ${hours}:${minutes}:${seconds}`;
+            }
+        } else if (bet.timestamp) {
+            // Si pas de date mais un timestamp, créer une date à partir du timestamp
+            const date = new Date(bet.timestamp);
+            dateText = date.toLocaleDateString('fr-FR');
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            const seconds = date.getSeconds().toString().padStart(2, '0');
+            dateText += ` ${hours}:${minutes}:${seconds}`;
+        }
+        
+        betsHTML += `
+            <div class="bet-card ${status}">
+                <div class="bet-header">
+                    <div class="league-badge">${league}</div>
+                    <div class="status-badge ${status}">${statusText}</div>
+                </div>
+                <div class="bet-details">
+                    <div class="teams">${teams}</div>
+                    <div class="score">Score: ${scoreText}</div>
+                    <div class="percentage">Pourcentage: <span>${formattedPercentage}</span></div>
+                </div>
+                <div class="bet-info">
+                    <div class="bet-amount">Mise: <span>${amount}</span></div>
+                    <div class="bet-potential">Gain potentiel: <span>${potentialWinnings}</span></div>
+                    <div class="bet-date">${dateText}</div>
+                </div>
+            </div>
+        `;
+    });
+    
+    // Assigner le HTML construit au conteneur
+    betsListContainer.innerHTML = betsHTML;
+}
 
-// Vérifier l'état de l'authentification
+/**
+ * Met à jour les totaux des balances dans l'interface
+ * @param {Array} bets - Tableau des paris
+ */
+function updateBalanceTotals(bets) {
+    let totalBets = 0;
+    let totalPotentialWinnings = 0;
+    
+    if (bets && bets.length > 0) {
+        bets.forEach(bet => {
+            // N'ajouter au total que les paris actifs
+            if (bet.status === 'active') {
+                // Extraire les montants numériques
+                const amount = extractNumber(bet.amount);
+                const potential = extractNumber(bet.potentialWinnings);
+                
+                totalBets += amount;
+                totalPotentialWinnings += potential;
+            }
+        });
+    }
+    
+    // Mettre à jour l'affichage des soldes - sélectionner correctement les éléments
+    const balanceAmounts = document.querySelectorAll('.balance-container .balance-amount');
+    if (balanceAmounts.length >= 2) {
+        balanceAmounts[0].textContent = formatAmount(totalBets);
+        balanceAmounts[1].textContent = formatAmount(totalPotentialWinnings);
+    }
+}
+
+/**
+ * Obtient la date et l'heure actuelle formatées
+ * @return {Object} Objet contenant la date et l'heure formatées
+ */
+function getCurrentFormattedDateTime() {
+    const now = new Date();
+    const date = now.toLocaleDateString('fr-FR');
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const seconds = now.getSeconds().toString().padStart(2, '0');
+    const time = `${hours}:${minutes}:${seconds}`;
+    
+    return { date, time };
+}
+
+/**
+ * Efface les données du pari dans le localStorage
+ */
+function clearBetData() {
+    localStorage.removeItem('betAmount');
+    localStorage.removeItem('betPotentialWinnings');
+    localStorage.removeItem('betDate');
+    localStorage.removeItem('selectedMatchId');
+    localStorage.removeItem('selectedMatchLeague');
+    localStorage.removeItem('selectedMatchTeams');
+    localStorage.removeItem('selectedMatchScore');
+    localStorage.removeItem('selectedMatchPercentage');
+    localStorage.removeItem('selectedMatchTime');
+}
+
+/**
+ * Traite et ajoute un nouveau pari à la base de données
+ * @param {string} userId - ID de l'utilisateur
+ * @param {Object} betData - Données du pari
+ */
+function addNewBet(userId, betData) {
+    try {
+        const betsRef = ref(database, `users/${userId}/bets`);
+        const newBetRef = push(betsRef);
+        
+        // S'assurer que les montants sont des valeurs numériques dans la base de données
+        if (betData.amount) {
+            betData.amount = extractNumber(betData.amount);
+        }
+        
+        if (betData.potentialWinnings) {
+            betData.potentialWinnings = extractNumber(betData.potentialWinnings);
+        }
+        
+        set(newBetRef, betData)
+            .then(() => {
+                // Succès: afficher le message et effacer les données de la mise actuelle
+                successMessage.style.display = 'block';
+                errorMessage.style.display = 'none';
+                
+                // Effacer immédiatement les données du localStorage
+                clearBetData();
+            })
+            .catch((error) => {
+                console.error("Erreur lors de l'ajout de la mise:", error);
+                errorMessage.style.display = 'block';
+                successMessage.style.display = 'none';
+            });
+    } catch (error) {
+        console.error("Une erreur s'est produite:", error);
+        errorMessage.style.display = 'block';
+        successMessage.style.display = 'none';
+    }
+}
+
+// Vérifier si l'utilisateur est connecté
 onAuthStateChanged(auth, async (user) => {
     if (user) {
         // Utilisateur connecté
-        currentUser = user;
-        console.log("Utilisateur connecté:", currentUser.uid);
+        const userId = user.uid;
         
-        // Charger les données de l'utilisateur
-        await loadUserData();
+        // Récupérer les données du pari depuis localStorage
+        const betAmount = localStorage.getItem('betAmount');
+        const betPotentialWinnings = localStorage.getItem('betPotentialWinnings');
         
-        // Charger les données du match
-        loadMatchData();
+        // Garantir une date et heure par défaut
+        const { date: formattedToday, time: formattedTime } = getCurrentFormattedDateTime();
+        const betDate = localStorage.getItem('betDate') || formattedToday;
+        
+        // S'il n'y a pas de mise récente, masquer le message de succès
+        if (!betAmount) {
+            successMessage.style.display = 'none';
+        }
+        
+        // Récupérer les données du match depuis le localStorage
+        const matchId = localStorage.getItem('selectedMatchId');
+        const league = localStorage.getItem('selectedMatchLeague');
+        const teams = localStorage.getItem('selectedMatchTeams');
+        
+        // Traitement correct du score
+        const scoreFromStorage = localStorage.getItem('selectedMatchScore');
+        // Si le score est null, vide, "À venir" ou non défini, on utilise "-" à la place
+        const score = (scoreFromStorage && scoreFromStorage !== "null" && 
+                      scoreFromStorage !== "undefined" && scoreFromStorage !== "À venir" &&
+                      scoreFromStorage.trim() !== "") 
+                      ? scoreFromStorage : "-";
+        
+        const percentage = localStorage.getItem('selectedMatchPercentage');
+        const time = localStorage.getItem('selectedMatchTime') || formattedTime;
+        
+        // Si on vient de placer une mise, l'ajouter à Firebase
+        if (betAmount && matchId) {
+            // Convertir les montants en nombres avant de les stocker
+            const cleanBetAmount = extractNumber(betAmount);
+            const cleanPotentialWinnings = extractNumber(betPotentialWinnings);
+            
+            // Garantir des valeurs par défaut pour toutes les propriétés
+            const newBet = {
+                matchId: matchId,
+                league: league || "Ligue inconnue",
+                teams: teams || "Match inconnu",
+                score: score, // Utilise le score corrigé
+                percentage: percentage || "1.0",
+                time: time,
+                amount: cleanBetAmount,
+                potentialWinnings: cleanPotentialWinnings,
+                date: betDate,
+                status: 'active',
+                timestamp: Date.now()
+            };
+            
+            // Ajouter la mise à Firebase
+            addNewBet(userId, newBet);
+        }
+        
+        // Récupérer les mises de l'utilisateur depuis Firebase
+        const userBetsRef = ref(database, `users/${userId}/bets`);
+        const betsQuery = query(userBetsRef, orderByChild('timestamp'));
+        
+        onValue(betsQuery, (snapshot) => {
+            try {
+                const betsData = snapshot.val();
+                
+                if (betsData) {
+                    // Convertir l'objet en tableau et trier par timestamp (du plus récent au plus ancien)
+                    const betsArray = Object.entries(betsData).map(([id, bet]) => {
+                        // Vérifier et traiter correctement le score
+                        let scoreValue = bet.score;
+                        if (!scoreValue || scoreValue === "null" || scoreValue === "undefined" || 
+                            scoreValue === "À venir" || scoreValue.trim() === "") {
+                            scoreValue = "-";
+                        }
+                        
+                        // Extraire les montants numériques
+                        const betAmount = extractNumber(bet.amount);
+                        const potentialWinnings = extractNumber(bet.potentialWinnings);
+                        
+                        return {
+                            id,
+                            league: bet.league || "Ligue inconnue",
+                            teams: bet.teams || "Match inconnu",
+                            score: scoreValue, // Score corrigé
+                            percentage: bet.percentage || "1.0",
+                            time: bet.time || "-",
+                            amount: betAmount, // Montant numérique
+                            potentialWinnings: potentialWinnings, // Montant numérique
+                            date: bet.date || new Date(bet.timestamp || Date.now()).toLocaleDateString('fr-FR'),
+                            status: bet.status || 'active',
+                            timestamp: bet.timestamp || Date.now()
+                        };
+                    });
+                    
+                    betsArray.sort((a, b) => b.timestamp - a.timestamp);
+                    
+                    // Mettre à jour les totaux
+                    updateBalanceTotals(betsArray);
+                    
+                    // Afficher les mises
+                    displayBets(betsArray);
+                } else {
+                    // Aucune mise trouvée
+                    displayBets([]);
+                    // Réinitialiser les totaux
+                    updateBalanceTotals([]);
+                }
+            } catch (error) {
+                console.error("Erreur lors du chargement des mises:", error);
+                betsListContainer.innerHTML = `
+                    <div class="empty-state">
+                        <p>Une erreur s'est produite lors du chargement de vos mises.</p>
+                        <button class="btn" onclick="window.location.reload()">Réessayer</button>
+                    </div>
+                `;
+            }
+        }, (error) => {
+            console.error("Erreur lors de la récupération des mises:", error);
+            betsListContainer.innerHTML = `
+                <div class="empty-state">
+                    <p>Une erreur s'est produite lors du chargement de vos mises.</p>
+                    <button class="btn" onclick="window.location.reload()">Réessayer</button>
+                </div>
+            `;
+        });
+        
     } else {
         // Utilisateur non connecté, rediriger vers la page de connexion
-        alert("Vous devez être connecté pour accéder à cette page");
         window.location.href = 'login.html';
     }
 });
-
-// Charger les données de l'utilisateur
-async function loadUserData() {
-    try {
-        const userRef = ref(database, `users/${currentUser.uid}`);
-        const snapshot = await get(userRef);
-        
-        if (snapshot.exists()) {
-            const userData = snapshot.val();
-            console.log("Données utilisateur récupérées:", userData);
-            
-            // Utiliser uniquement le champ BALANCE_FIELD_NAME pour le solde principal
-            if (userData[BALANCE_FIELD_NAME] !== undefined) {
-                userBalances.mainBalance = Number(userData[BALANCE_FIELD_NAME]);
-            } else {
-                // Si le champ n'existe pas, nous allons le créer avec un solde par défaut
-                userBalances.mainBalance = 0;
-                
-                // Migration possible depuis mainBalance si elle existe
-                if (userData.mainBalance !== undefined) {
-                    userBalances.mainBalance = Number(userData.mainBalance);
-                    
-                    // Mettre à jour le champ dans la base de données
-                    const updates = {};
-                    updates[BALANCE_FIELD_NAME] = userBalances.mainBalance;
-                    await update(userRef, updates);
-                    console.log("Migration de mainBalance vers balance effectuée");
-                }
-            }
-            
-            console.log("Solde principal chargé:", userBalances.mainBalance);
-            
-            // Solde de volume (facultatif)
-            userBalances.volumeBalance = Number(userData.volumeBalance || 0);
-            
-            // Afficher les soldes
-            displayBalances();
-        } else {
-            console.log("Profil utilisateur non trouvé, création d'un nouveau profil");
-            // Créer un profil utilisateur s'il n'existe pas
-            const newUser = {
-                email: currentUser.email,
-                volumeBalance: 2000,
-                createdAt: new Date().toISOString()
-            };
-            
-            // Utiliser le champ BALANCE_FIELD_NAME pour le solde principal
-            newUser[BALANCE_FIELD_NAME] = 5000;
-            
-            await set(userRef, newUser);
-            
-            userBalances.mainBalance = 5000;
-            userBalances.volumeBalance = 2000;
-            
-            // Afficher les soldes
-            displayBalances();
-            
-            console.log("Nouveau profil créé avec soldes:", userBalances);
-        }
-    } catch (error) {
-        console.error("Erreur lors du chargement des données utilisateur:", error);
-        alert("Erreur lors du chargement des données. Veuillez réessayer.");
-    }
-}
-
-// Fonction pour afficher les soldes de l'utilisateur
-function displayBalances() {
-    if (mainBalanceElement) {
-        mainBalanceElement.textContent = userBalances.mainBalance.toLocaleString() + ' FCFA';
-        console.log("Solde principal affiché sur l'interface:", userBalances.mainBalance);
-    } else {
-        console.error("Élément de solde principal non trouvé dans le DOM");
-    }
-}
-
-// Fonction pour convertir le format de temps du match en objet Date
-function parseMatchTime(timeString) {
-    try {
-        // Le format attendu est par exemple: "23/04/2025 15:30"
-        // Vérifier si le format inclut une date ou seulement l'heure
-        if (timeString.includes('/')) {
-            // Format complet avec date et heure
-            const [datePart, timePart] = timeString.split(' ');
-            const [day, month, year] = datePart.split('/');
-            const [hour, minute] = timePart.split(':');
-            
-            // Créer un objet Date (les mois sont de 0 à 11 en JavaScript)
-            return new Date(Number(year), Number(month) - 1, Number(day), Number(hour), Number(minute));
-        } else {
-            // Seulement l'heure, on suppose que c'est aujourd'hui
-            const [hour, minute] = timeString.split(':');
-            const today = new Date();
-            return new Date(today.getFullYear(), today.getMonth(), today.getDate(), Number(hour), Number(minute));
-        }
-    } catch (error) {
-        console.error("Erreur lors de l'analyse de l'heure du match:", error);
-        // En cas d'erreur, retourner une date dans le futur pour ne pas bloquer les paris
-        const futureDate = new Date();
-        futureDate.setDate(futureDate.getDate() + 1); // Date de demain
-        return futureDate;
-    }
-}
-
-// Vérifier si l'heure du match est dépassée
-function isMatchTimeExpired() {
-    if (!matchDateTime) return false;
-    
-    const now = new Date();
-    console.log("Heure actuelle:", now);
-    console.log("Heure du match:", matchDateTime);
-    
-    // Si l'heure du match est dépassée de 1 heure, on considère qu'on ne peut plus parier
-    const matchTimePlusOneHour = new Date(matchDateTime.getTime() + 60 * 60000);
-    const isExpired = now > matchTimePlusOneHour;
-    
-    console.log("Match expiré?", isExpired);
-    return isExpired;
-}
-
-// Désactiver le formulaire de paris si l'heure est dépassée
-function disableBettingIfExpired() {
-    if (isMatchTimeExpired()) {
-        console.log("L'heure du match est dépassée, désactivation du formulaire de paris");
-        
-        // Désactiver le formulaire
-        submitButton.disabled = true;
-        betAmountInput.disabled = true;
-        
-        // Afficher un message d'erreur
-        if (timeExpiredError) {
-            timeExpiredError.style.display = 'block';
-            timeExpiredError.textContent = "Le match a commencé. Les paris ne sont plus acceptés.";
-        } else {
-            // Créer l'élément s'il n'existe pas
-            const errorDiv = document.createElement('div');
-            errorDiv.id = 'time-expired-error';
-            errorDiv.className = 'error-message';
-            errorDiv.textContent = "Le match a commencé. Les paris ne sont plus acceptés.";
-            errorDiv.style.color = 'red';
-            errorDiv.style.marginTop = '10px';
-            errorDiv.style.display = 'block';
-            
-            // Ajouter au formulaire
-            bettingForm.appendChild(errorDiv);
-        }
-        
-        return true;
-    }
-    
-    return false;
-}
-
-// Charger les données du match
-function loadMatchData() {
-    try {
-        // Récupérer les données du match depuis le localStorage
-        matchId = localStorage.getItem('selectedMatchId');
-        league = localStorage.getItem('selectedMatchLeague');
-        teams = localStorage.getItem('selectedMatchTeams');
-        score = localStorage.getItem('selectedMatchScore');
-        percentageRaw = localStorage.getItem('selectedMatchPercentage') || "1.99"; // Valeur par défaut
-        time = localStorage.getItem('selectedMatchTime');
-        
-        console.log("Données du match chargées:", {
-            matchId, league, teams, score, percentageRaw, time
-        });
-
-        // Convertir en nombre réel - remplacer la virgule par un point
-        percentage = parseFloat(percentageRaw.replace(',', '.'));
-        console.log("Pourcentage après conversion:", percentage);
-
-        // Vérifier si les données du match existent
-        if (!matchId || !league || !teams) {
-            alert("Aucun match sélectionné. Redirection vers la page des matchs.");
-            window.location.href = 'index.html';
-            return;
-        }
-
-        // Convertir le temps du match en objet Date
-        if (time) {
-            matchDateTime = parseMatchTime(time);
-            console.log("Date et heure du match après conversion:", matchDateTime);
-            
-            // Vérifier si l'heure du match est dépassée
-            if (disableBettingIfExpired()) {
-                console.log("Formulaire de paris désactivé car l'heure est dépassée");
-            }
-        }
-
-        // Afficher les détails du match sur la page
-        document.getElementById('league-display').textContent = league;
-        document.getElementById('teams-display').textContent = teams;
-        document.getElementById('score-display').textContent = score || "À venir";
-        document.getElementById('percentage-display').textContent = `${percentageRaw}`;
-        document.getElementById('time-display').textContent = time;
-        
-        // Calculer les gains initiaux
-        calculatePotentialWinnings();
-    } catch (error) {
-        console.error("Une erreur s'est produite lors du chargement des données du match:", error);
-        alert("Une erreur s'est produite lors du chargement des données du match.");
-    }
-}
-
-// Calculer les gains potentiels
-function calculatePotentialWinnings() {
-    const betAmount = Number(betAmountInput.value) || 0;
-    
-    // S'assurer que le pourcentage est un nombre et calculer correctement
-    const winnings = betAmount * (percentage / 100);
-    console.log(`Calcul des gains: ${betAmount} * (${percentage}/100) = ${winnings}`);
-    
-    // Afficher les gains
-    winningsDisplay.textContent = winnings.toLocaleString(undefined, { maximumFractionDigits: 2 }) + ' FCFA';
-    
-    // Vérifier si le solde est suffisant
-    validateBetAmount(betAmount);
-}
-
-// Valider le montant de la mise avec vérification en temps réel du solde
-async function validateBetAmount(amount) {
-    // Réinitialiser les messages d'erreur
-    amountError.style.display = 'none';
-    balanceError.style.display = 'none';
-    submitButton.disabled = false;
-    
-    // Vérifier d'abord si l'heure du match est dépassée
-    if (isMatchTimeExpired()) {
-        disableBettingIfExpired();
-        return false;
-    }
-    
-    console.log("Validation du montant de mise:", amount);
-    
-    // Vérifier si le montant est valide
-    if (!amount || amount < 100) {
-        amountError.style.display = 'block';
-        submitButton.disabled = true;
-        console.log("Montant invalide (<100)");
-        return false;
-    }
-    
-    try {
-        // Récupérer le solde actuel depuis la base de données pour une vérification en temps réel
-        const userRef = ref(database, `users/${currentUser.uid}`);
-        const snapshot = await get(userRef);
-        
-        let currentBalance = 0;
-        
-        if (snapshot.exists()) {
-            const userData = snapshot.val();
-            // Utiliser uniquement le champ BALANCE_FIELD_NAME cohérent
-            currentBalance = Number(userData[BALANCE_FIELD_NAME] || 0);
-            console.log(`Solde actuel (${BALANCE_FIELD_NAME}):`, currentBalance);
-            
-            // Mettre à jour notre variable locale
-            userBalances.mainBalance = currentBalance;
-            
-            // Afficher le solde mis à jour
-            displayBalances();
-        }
-        
-        // Vérifier explicitement si le solde est suffisant
-        console.log("Vérification finale du solde:", {
-            montantMise: amount,
-            soldeCourant: currentBalance,
-            comparison: amount > currentBalance
-        });
-        
-        if (amount > currentBalance) {
-            balanceError.style.display = 'block';
-            submitButton.disabled = true;
-            console.log("Solde insuffisant!");
-            return false;
-        }
-        
-        console.log("Validation réussie, solde suffisant");
-        return true;
-    } catch (error) {
-        console.error("Erreur lors de la vérification du solde:", error);
-        alert("Erreur lors de la vérification du solde. Veuillez réessayer.");
-        return false;
-    }
-}
-
-// Enregistrer la mise dans la base de données
-async function saveBet(betAmount, winnings) {
-    try {
-        // Vérifier une dernière fois si l'heure du match est dépassée
-        if (isMatchTimeExpired()) {
-            disableBettingIfExpired();
-            return;
-        }
-        
-        // Afficher le chargeur
-        loader.style.display = 'inline-block';
-        submitButton.disabled = true;
-        
-        console.log("Enregistrement de la mise:", {betAmount, winnings});
-        
-        // Créer un ID unique pour la mise
-        const betId = Date.now().toString();
-        
-        // S'assurer que betAmount et winnings sont des nombres
-        betAmount = Number(betAmount);
-        winnings = Number(winnings);
-        
-        // Créer la mise dans la base de données
-        const betRef = ref(database, `users/${currentUser.uid}/bets/${betId}`);
-        await set(betRef, {
-            matchId: matchId,
-            teams: teams,
-            league: league,
-            amount: betAmount,
-            percentage: percentageRaw,
-            potentialWinnings: winnings,
-            status: 'pending', // pending, won, lost
-            createdAt: new Date().toISOString()
-        });
-        
-        console.log("Mise enregistrée, mise à jour du solde utilisateur");
-        
-        // Obtenir le solde actuel une dernière fois pour être sûr
-        const userRef = ref(database, `users/${currentUser.uid}`);
-        const snapshot = await get(userRef);
-        
-        let currentBalance = 0;
-        
-        if (snapshot.exists()) {
-            const userData = snapshot.val();
-            // Utiliser uniquement le champ cohérent
-            currentBalance = Number(userData[BALANCE_FIELD_NAME] || 0);
-        }
-        
-        // Calculer le nouveau solde
-        const newBalance = currentBalance - betAmount;
-        console.log(`Mise à jour du solde: ${currentBalance} - ${betAmount} = ${newBalance}`);
-        
-        // Mettre à jour le champ dans la base de données
-        const update_data = {};
-        update_data[BALANCE_FIELD_NAME] = newBalance;
-        
-        await update(userRef, update_data);
-        console.log("Solde mis à jour dans la base de données:", update_data);
-        
-        // Mettre à jour les soldes en mémoire
-        userBalances.mainBalance = newBalance;
-        
-        // Mettre à jour le localStorage avec les informations de la mise
-        localStorage.setItem('betId', betId);
-        localStorage.setItem('betAmount', betAmount.toString());
-        localStorage.setItem('betPotentialWinnings', winnings.toLocaleString(undefined, { maximumFractionDigits: 2 }));
-        localStorage.setItem('betPercentage', percentageRaw);
-        localStorage.setItem('betDate', new Date().toLocaleString());
-        
-        console.log("Redirection vers la page de suivi des mises");
-        // Rediriger vers la page de suivi des mises
-        window.location.href = 'mises.html';
-        
-    } catch (error) {
-        console.error("Erreur lors de l'enregistrement de la mise:", error);
-        alert("Une erreur s'est produite lors de l'enregistrement de la mise. Veuillez réessayer.");
-        
-        // Cacher le chargeur
-        loader.style.display = 'none';
-        submitButton.disabled = false;
-    }
-}
-
-// Événements
-// Mettre à jour les gains potentiels lorsque le montant change
-betAmountInput.addEventListener('input', calculatePotentialWinnings);
-
-// Gérer la soumission du formulaire
-bettingForm.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    // Vérifier si l'heure du match est dépassée
-    if (isMatchTimeExpired()) {
-        disableBettingIfExpired();
-        return;
-    }
-    
-    // Récupérer le montant de la mise
-    const betAmount = parseFloat(betAmountInput.value);
-    
-    console.log("Soumission du formulaire avec montant:", betAmount);
-    
-    // Valider le montant de la mise
-    const isValid = await validateBetAmount(betAmount);
-    if (!isValid) {
-        console.log("Validation échouée, arrêt de la soumission");
-        return;
-    }
-    
-    // Calculer les gains pour les stocker
-    const winnings = betAmount * (percentage / 100);
-    
-    // Enregistrer la mise
-    await saveBet(betAmount, winnings);
-});
-
-// Débogage - afficher les soldes au chargement
-window.addEventListener('load', () => {
-    console.log("Page chargée, soldes actuels:", userBalances);
-});
-
-// Vérifier l'heure du match toutes les 30 secondes pour désactiver le formulaire si nécessaire
-setInterval(() => {
-    if (isMatchTimeExpired()) {
-        disableBettingIfExpired();
-    }
-}, 30000); // 30 secondes
-    </script>
+    </script> 
 </body>
 </html>
